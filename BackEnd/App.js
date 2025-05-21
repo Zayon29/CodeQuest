@@ -3,10 +3,11 @@ const cors = require('cors');
 const connectDB = require('./Database');
 
 
-// Importe todas as rotas da mesma forma
+// Import de todas as rotas
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/UserRoute');
 const desafioRoutes = require('./routes/DesafioRoute');
+const submitRoutes = require('./routes/submitRoute');
 
 console.log('Tipo de desafioRoutes:', typeof desafioRoutes);
 
@@ -26,6 +27,7 @@ console.log('🧭 Registrando rotas...');
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/desafios', desafioRoutes);
+app.use('/api/submit', submitRoutes);
 
 app.get('/', (req, res) => res.send('Servidor ativo'));
 const PORT = process.env.PORT || 5000;
