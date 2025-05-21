@@ -8,7 +8,7 @@ body {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center; /* centraliza horizontalmente */
+  align-items: center;
 }
 
 .title {
@@ -21,37 +21,64 @@ body {
   text-shadow: 0 0 10px #ff00cc, 0 0 20px #3333ff;
 }
 
+/* Caixa central */
 .center-container {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 60px;
-    gap: 40px;
-    flex-wrap: wrap;
-  }
-  
-  .box {
-    width: 300px;
-    min-height: 200px;
-    padding: 20px;
-    background: #1e1e2f;
-    color: #fff;
+    align-items: stretch;
+    margin-top: 40px;
+    width: 80vw;
+    height: 300px;
+    user-select: none; /* evita seleção enquanto arrasta */
     border-radius: 10px;
+    overflow: hidden;
+    background: #1e1e2f;
     box-shadow: 0 0 15px rgba(255, 0, 204, 0.4);
   }
+
+/* Estilo comum dos quadros */
+.box {
+    min-width: 100px;
+    padding: 20px;
+    color: #fff;
+    background: #2e2e4d;
+    box-sizing: border-box;
+    overflow: auto;
+  }
+
+/* Ajustes visuais para unir as caixas */
+.left-box {
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+  }
   
-  .editor-box textarea {
+  .right-box {
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+  }
+
+  .divider {
+    width: 10px;
+    cursor: col-resize;
+    background: linear-gradient(90deg, #ff00cc, #3333ff);
+    box-shadow: 0 0 5px #ff00cc;
+    user-select: none;
+  }
+
+/* Editor de texto */
+.editor-box textarea {
     width: 100%;
-    height: 120px;
-    background-color: #2e2e4d;
+    height: 100%;
+    background-color: #1e1e2f;
     color: #fff;
     border: none;
     padding: 10px;
     font-family: monospace;
     resize: none;
     border-radius: 5px;
+    outline: none;
+    box-sizing: border-box;
   }
-  
+
   h2 {
     margin-top: 0;
     color: #ff00cc;
