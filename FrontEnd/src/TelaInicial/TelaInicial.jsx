@@ -1,77 +1,80 @@
 import './TelaInicial.css'
 
-import { useState, useRef } from 'react'
+import { useState } from "react";
 
 function App() {
-  const [leftWidth, setLeftWidth] = useState(320) // largura inicial do box esquerdo
-  const containerRef = useRef(null)
-  const isDragging = useRef(false)
+  const [leftWidth, setLeftWidth] = useState(400);
+  const [isDragging, setIsDragging] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
-  function onMouseDown() {
-    isDragging.current = true
-  }
+  const handleMouseDown = () => {
+    setIsDragging(true);
+  };
 
-  function onMouseUp() {
-    isDragging.current = false
-  }
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
 
-  function onMouseMove(e) {
-    if (!isDragging.current) return
+  const handleMouseMove = (e) => {
+    if (isDragging) {
+      // Calcula a largura do lado esquerdo baseada na posição do mouse
+      const newWidth = e.clientX - 0; // assumindo margem esquerda 0
+      if (newWidth > 200 && newWidth < window.innerWidth - 200) {
+        setLeftWidth(newWidth);
+      }
+    }
+  };
 
-    const container = containerRef.current
-    if (!container) return
+  const handleOptionClick = (option) => {
+    alert(`Você escolheu: ${option}`);
+    setMenuOpen(false);
+  };
 
-    // Calcula posição relativa do mouse dentro do container
-    const rect = container.getBoundingClientRect()
-    let newWidth = e.clientX - rect.left
-
-    // Define limites mínimos e máximos para largura
-    const minWidth = 100
-    const maxWidth = rect.width - 100
-
-    if (newWidth < minWidth) newWidth = minWidth
-    if (newWidth > maxWidth) newWidth = maxWidth
-
-    setLeftWidth(newWidth)
-  }
+  // Escuta global para parar o drag
+  window.onmouseup = handleMouseUp;
+  window.onmousemove = handleMouseMove;
 
   return (
-    <div>
+    <>
       <h1 className="title">CodeQuest</h1>
 
-      <div
-        className="center-container"
-        ref={containerRef}
-        onMouseMove={onMouseMove}
-        onMouseLeave={onMouseUp}
-        onMouseUp={onMouseUp}
-      >
-        <div
-          className="box text-box left-box"
-          style={{ width: leftWidth }}
-        >
-          <h2>Texto de Exemplo</h2>
-          <p>
-            Este é um texto exibido no segundo quadro. Você pode colocar qualquer conteúdo aqui!
-          </p>
+      <div className="center-container">
+        <div className="box left-box" style={{ width: leftWidth }}>
+          <h2>Texto</h2>
+          <p>Esse é um texto estático na caixa da esquerda.</p>
         </div>
 
-        {/* Divisor arrastável */}
-        <div
-          className="divider"
-          onMouseDown={onMouseDown}
-        />
+        <div className="divider" onMouseDown={handleMouseDown}></div>
 
         <div
           className="box editor-box right-box"
-          style={{ width: `calc(100% - ${leftWidth + 10}px)` }} // 10px do divisor
+          style={{ width: `calc(100% - ${leftWidth + 10}px)` }}
         >
+          <div className="editor-header">
+            <button
+              className="menu-button"
+              onClick={() => setMenuOpen((open) => !open)}
+            >
+              codeQuest
+            </button>
+            {menuOpen && (
+              <div className="dropdown-menu">
+                <button onClick={() => handleOptionClick("Opção 1")}>
+                  Opção 1
+                </button>
+                <button onClick={() => handleOptionClick("Opção 2")}>
+                  Opção 2
+                </button>
+              </div>
+            )}
+          </div>
+
           <h2>Editor</h2>
           <textarea placeholder="Digite aqui..." />
         </div>
       </div>
-    </div>
-  )
+    </>
+  );
 }
 
-export default App
+export default App;
