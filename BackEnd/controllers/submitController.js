@@ -2,7 +2,7 @@ const axios = require('axios');
 const Desafio = require('../models/Desafio');
 
 const JUDGE0_BASE_URL = 'https://judge0-ce.p.rapidapi.com/submissions';
-const RAPIDAPI_KEY = process.env.JUDGE0_KEY || '60c64910b7msh61bb2c1c5e3ec8ep176861jsn91baa08a6dee';
+const RAPIDAPI_KEY = '60c64910b7msh61bb2c1c5e3ec8ep176861jsn91baa08a6dee';
 
 const headers = {
   'content-type': 'application/json',
