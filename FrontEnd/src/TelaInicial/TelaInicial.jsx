@@ -1,24 +1,19 @@
-import './TelaInicial.css'
-
+import "./TelaInicial.css";
 import { useState } from "react";
 
-function App() {
+function TelaInicial() {
   const [leftWidth, setLeftWidth] = useState(400);
   const [isDragging, setIsDragging] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState(""); // linguagem escolhida
+  const [code, setCode] = useState(""); // código do editor
 
-  const handleMouseDown = () => {
-    setIsDragging(true);
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
-  };
+  const handleMouseDown = () => setIsDragging(true);
+  const handleMouseUp = () => setIsDragging(false);
 
   const handleMouseMove = (e) => {
     if (isDragging) {
-      // Calcula a largura do lado esquerdo baseada na posição do mouse
-      const newWidth = e.clientX - 0; // assumindo margem esquerda 0
+      const newWidth = e.clientX;
       if (newWidth > 200 && newWidth < window.innerWidth - 200) {
         setLeftWidth(newWidth);
       }
@@ -26,11 +21,59 @@ function App() {
   };
 
   const handleOptionClick = (option) => {
-    alert(`Você escolheu: ${option}`);
+    setSelectedLanguage(option);
     setMenuOpen(false);
   };
 
-  // Escuta global para parar o drag
+  const handleSubmit = async () => {
+    if (!selectedLanguage || !code.trim()) {
+      alert("Selecione uma linguagem e escreva algum código antes de realizar o envio.");
+      return;
+    }
+
+    let selectedLanguageId;
+    switch (selectedLanguage) {
+      case "Assembly":
+        selectedLanguageId = 45;
+      case "C-9.2.0":
+        selectedLanguageId = 50;
+      case "C++-9.2.0":
+        selectedLanguageId = 54;
+      case "Java-JDK17.0.6":
+        selectedLanguageId = 91;
+      case "JavaScript-22.08.0":
+        selectedLanguageId = 102;
+      case "Python-3.8.1":
+        selectedLanguageId = 71;
+    }
+
+    // print(sum(map(int, input().split())))
+
+    let desafioId = "6824cc9366c4b2f992d3e2e2"
+
+
+    try {
+      const response = await fetch("http://localhost:5000/api/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          source_code: code,
+          language_id: selectedLanguageId,
+          desafioId: desafioId
+        }),
+      });
+
+      if (!response.ok) throw new Error("Erro ao enviar");
+
+      const result = await response.json();
+      alert("Código enviado com sucesso!\nResposta do servidor: " + JSON.stringify(result));
+    } catch (error) {
+      alert("Erro ao enviar código: " + error.message);
+    }
+  };
+
   window.onmouseup = handleMouseUp;
   window.onmousemove = handleMouseMove;
 
@@ -47,34 +90,54 @@ function App() {
         <div className="divider" onMouseDown={handleMouseDown}></div>
 
         <div
-          className="box editor-box right-box"
+          className="editor-box right-box"
           style={{ width: `calc(100% - ${leftWidth + 10}px)` }}
         >
           <div className="editor-header">
-            <button
-              className="menu-button"
-              onClick={() => setMenuOpen((open) => !open)}
-            >
-              codeQuest
-            </button>
-            {menuOpen && (
-              <div className="dropdown-menu">
-                <button onClick={() => handleOptionClick("Opção 1")}>
-                  Opção 1
-                </button>
-                <button onClick={() => handleOptionClick("Opção 2")}>
-                  Opção 2
-                </button>
-              </div>
-            )}
+            <h2 className="editor-title">Editor</h2>
+            <div className="menu-container">
+              <button
+                className="menu-button"
+                onClick={() => setMenuOpen((open) => !open)}
+              >
+                {selectedLanguage || "Linguagens"}
+              </button>
+              {menuOpen && (
+                <div className="dropdown-menu">
+                  {[
+                    "Assembly",
+                    "C-9.2.0",
+                    "C++-9.2.0",
+                    "Java-JDK17.0.6",
+                    "JavaScript-22.08.0",
+                    "Python-3.8.1",
+                  ].map((lang) => (
+                    <button key={lang} onClick={() => handleOptionClick(lang)}>
+                      {lang}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
-          <h2>Editor</h2>
-          <textarea placeholder="Digite aqui..." />
+          <textarea
+            placeholder="Digite seu código aqui..."
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+          />
+
+          <button className="submit-button" onClick={handleSubmit}>
+            Enviar Código
+          </button>
         </div>
       </div>
+
+      <footer className="footer">
+        <p>Desenvolvido por Vitor, Zayon e Thomas • CodeQuest © 2025</p>
+      </footer>
     </>
   );
 }
 
-export default App;
+export default TelaInicial;
