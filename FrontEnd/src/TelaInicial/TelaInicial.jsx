@@ -31,21 +31,29 @@ function TelaInicial() {
       return;
     }
 
-    let selectedLanguageId;
-    switch (selectedLanguage) {
-      case "Assembly":
-        selectedLanguageId = 45;
-      case "C-9.2.0":
-        selectedLanguageId = 50;
-      case "C++-9.2.0":
-        selectedLanguageId = 54;
-      case "Java-JDK17.0.6":
-        selectedLanguageId = 91;
-      case "JavaScript-22.08.0":
-        selectedLanguageId = 102;
-      case "Python-3.8.1":
-        selectedLanguageId = 71;
-    }
+let selectedLanguageId;
+switch (selectedLanguage) {
+  case "Assembly":
+    selectedLanguageId = 45;
+    break;
+  case "C-9.2.0":
+    selectedLanguageId = 50;
+    break;
+  case "C++-9.2.0":
+    selectedLanguageId = 54;
+    break;
+  case "Java-JDK17.0.6":
+    selectedLanguageId = 91;
+    break;
+  case "JavaScript-22.08.0":
+    selectedLanguageId = 93;
+    break;
+  case "Python-3.8.1":
+    selectedLanguageId = 71;
+    break;
+  default:
+    selectedLanguageId = null;
+}
 
     // print(sum(map(int, input().split())))
 
@@ -122,10 +130,12 @@ function TelaInicial() {
           </div>
 
           <textarea
-            placeholder="Digite seu código aqui..."
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-          />
+                className="code-editor"
+                placeholder={`Digite seu código em ${selectedLanguage || 'alguma linguagem'}...`}
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                spellCheck="false"
+/>
 
           <button className="submit-button" onClick={handleSubmit}>
             Enviar Código
