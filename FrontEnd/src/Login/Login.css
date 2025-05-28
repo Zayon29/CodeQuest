@@ -1,0 +1,117 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
+
+body, html {
+  margin: 0;
+  height: 100%;
+  font-family: 'Orbitron', sans-serif;
+  background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+  background-size: 400% 400%;
+  animation: gradientMove 15s ease infinite;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+}
+
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.login-container {
+  background: #1e1e2f;
+  padding: 2.5rem 3rem;
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(255, 0, 204, 0.4);
+  width: 360px;
+  text-align: center;
+  position: relative;
+}
+
+.login-container h2 {
+  margin-bottom: 2rem;
+  color: #ff00cc;
+  font-size: 2.5rem;
+  text-shadow: 0 0 15px #ff00cc;
+}
+
+.input-field {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.5rem;
+  font-size: 1.1rem;
+  border-radius: 8px;
+  border: none;
+  background: #2e2e4d;
+  color: #fff;
+  box-shadow: inset 0 0 8px #3333ff;
+  transition: box-shadow 0.3s ease;
+}
+
+.input-field::placeholder {
+  color: #ff66cc;
+  opacity: 0.8;
+}
+
+.input-field:focus {
+  outline: none;
+  box-shadow: 0 0 12px #ff00cc, 0 0 20px #3333ff;
+  background: #3a306a;
+}
+
+.btn-login {
+  width: 100%;
+  padding: 0.85rem 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: white;
+  background: linear-gradient(90deg, #ff00cc, #3333ff);
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  box-shadow: 0 0 15px #ff00cc, 0 0 20px #3333ff;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+  letter-spacing: 1.3px;
+}
+
+.btn-login:hover {
+  background: linear-gradient(90deg, #3333ff, #ff00cc);
+  box-shadow: 0 0 25px #3333ff, 0 0 40px #ff00cc;
+}
+
+.error-message {
+  color: #ff66cc;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  text-shadow: 0 0 10px #ff00cc;
+}
+
+/* BOTAO CANCELAR */
+
+.btn-cancel {
+  width: 100%;
+  margin-top: 0.75rem;
+  padding: 0.85rem 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: white;
+  background: linear-gradient(90deg, #555555, #222222);
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  box-shadow: 0 0 10px #555555;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+  letter-spacing: 1.3px;
+}
+
+.btn-cancel:hover {
+  background: linear-gradient(90deg, #222222, #555555);
+  box-shadow: 0 0 20px #888888;
+}
+
+.login-container form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
