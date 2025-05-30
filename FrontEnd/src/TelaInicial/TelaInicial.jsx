@@ -9,8 +9,8 @@ function TelaInicial() {
   const [dragOffset, setDragOffset] = useState(0);
 
   const [menuOpen, setMenuOpen] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState(""); // linguagem escolhida
-  const [code, setCode] = useState(""); // código do editor
+  const [selectedLanguage, setSelectedLanguage] = useState("");
+  const [code, setCode] = useState("");
 
   const [mostrarLogin, setMostrarLogin] = useState(false);
   const [usuarioLogado, setUsuarioLogado] = useState(null);
@@ -21,7 +21,52 @@ function TelaInicial() {
   const abrirLogin = () => setMostrarLogin(true);
   const fecharLogin = () => setMostrarLogin(false);
 
-  // Funções de drag para ajustar largura da caixa esquerda
+  const handleLogin = (usuario) => {
+    setUsuarioLogado(usuario);
+    setMostrarLogin(false);
+  };
+
+  const handleLogout = () => {
+    setUsuarioLogado(null);
+    // Você pode adicionar aqui qualquer limpeza adicional necessária
+    // como remover tokens de autenticação do localStorage, etc.
+  };
+
+  const handleCadastro = async (usuario) => {
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          nome: usuario.nome,
+          email: usuario.email,
+          senha: usuario.senha,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "Erro ao cadastrar");
+      }
+
+      alert(
+        "Usuário cadastrado com sucesso!\nResposta do servidor: " +
+          JSON.stringify(result)
+      );
+      setUsuarioLogado({
+        email: usuario.email,
+        nome: usuario.nome
+      });
+    } catch (error) {
+      alert("Erro ao cadastrar: " + error.message);
+    }
+
+    setMostrarCadastro(false);
+  };
+
   const handleMouseDown = (e) => {
     setIsDragging(true);
     setDragOffset(e.clientX - leftWidth);
@@ -55,13 +100,11 @@ function TelaInicial() {
     };
   }, [isDragging, dragOffset]);
 
-  // Menu seleção linguagem
   const handleOptionClick = (option) => {
     setSelectedLanguage(option);
     setMenuOpen(false);
   };
 
-  // Enviar código
   const handleSubmit = async () => {
     if (!selectedLanguage || !code.trim()) {
       alert(
@@ -109,7 +152,10 @@ function TelaInicial() {
         }),
       });
 
-      if (!response.ok) throw new Error("Erro ao enviar");
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Erro ao enviar código");
+      }
 
       const result = await response.json();
       alert(
@@ -121,72 +167,8 @@ function TelaInicial() {
     }
   };
 
-  // Função chamada no login bem-sucedido
-  const handleLogin = async (usuario) => {
-    try {
-      const response = await fetch("http://localhost:5000/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: usuario.email,
-          senha: usuario.senha,
-        }),
-      });
-
-      if (!response.ok) throw new Error("Erro ao logar");
-
-      const result = await response.json();
-      alert(
-        "Usuário logado com sucesso!\nResposta do servidor: " +
-          JSON.stringify(result)
-      );
-
-      setUsuarioLogado(result.usuario); // Use o objeto retornado do backend
-    } catch (error) {
-      alert("Erro ao logar: " + error.message);
-    }
-
-    setMostrarLogin(false);
-  };
-
-  const handleCadastro = async (usuario) => {
-  try {
-    const response = await fetch("http://localhost:5000/api/auth/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        nome: usuario.nome,
-        email: usuario.email,
-        senha: usuario.senha,
-      }),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Erro ao cadastrar");
-    }
-
-    const result = await response.json();
-    alert(
-      "Usuário cadastrado com sucesso!\nResposta do servidor: " +
-        JSON.stringify(result)
-    );
-    setUsuarioLogado(usuario);
-  } catch (error) {
-    alert("Erro ao cadastrar: " + error.message);
-  }
-
-  setMostrarCadastro(false);
-};
-
-
   return (
     <>
-      {/* Header */}
       <header className="header">
         <h1 className="title">CodeQuest</h1>
 
@@ -201,22 +183,23 @@ function TelaInicial() {
           </div>
         )}
         {usuarioLogado && (
-          <div className="welcome-message">Olá, {usuarioLogado.email}</div>
+          <div className="user-container">
+            <div className="welcome-message">Olá, {usuarioLogado.nome || usuarioLogado.email}</div>
+            <button className="logout-button" onClick={handleLogout}>
+              Logout
+            </button>
+          </div>
         )}
       </header>
 
-      {/* Container principal */}
       <div className="center-container">
-        {/* Caixa esquerda */}
         <div className="box left-box" style={{ width: leftWidth }}>
           <h2>Texto</h2>
           <p>Esse é um texto estático na caixa da esquerda.</p>
         </div>
 
-        {/* Divisor de drag */}
         <div className="divider" onMouseDown={handleMouseDown}></div>
 
-        {/* Caixa direita - editor */}
         <div
           className="editor-box right-box"
           style={{ width: `calc(100% - ${leftWidth + 10}px)` }}
@@ -265,21 +248,18 @@ function TelaInicial() {
         </div>
       </div>
 
-      {/* Overlay do login */}
       {mostrarLogin && (
         <div className="login-overlay">
           <Login onLogin={handleLogin} onCancel={fecharLogin} />
         </div>
       )}
 
-      {/* Overlay do cadastro */}
       {mostrarCadastro && (
         <div className="login-overlay">
           <Cadastro onRegister={handleCadastro} onCancel={fecharCadastro} />
         </div>
       )}
 
-      {/* Footer */}
       <footer className="footer">
         <p>Desenvolvido por Vitor, Zayon e Thomas • CodeQuest © 2025</p>
       </footer>
