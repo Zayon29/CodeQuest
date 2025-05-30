@@ -18,6 +18,8 @@ function TelaInicial() {
 
   const abrirCadastro = () => setMostrarCadastro(true);
   const fecharCadastro = () => setMostrarCadastro(false);
+  const abrirLogin = () => setMostrarLogin(true);
+  const fecharLogin = () => setMostrarLogin(false);
 
   // Funções de drag para ajustar largura da caixa esquerda
   const handleMouseDown = (e) => {
@@ -62,7 +64,9 @@ function TelaInicial() {
   // Enviar código
   const handleSubmit = async () => {
     if (!selectedLanguage || !code.trim()) {
-      alert("Selecione uma linguagem e escreva algum código antes de realizar o envio.");
+      alert(
+        "Selecione uma linguagem e escreva algum código antes de realizar o envio."
+      );
       return;
     }
 
@@ -108,23 +112,77 @@ function TelaInicial() {
       if (!response.ok) throw new Error("Erro ao enviar");
 
       const result = await response.json();
-      alert("Código enviado com sucesso!\nResposta do servidor: " + JSON.stringify(result));
+      alert(
+        "Código enviado com sucesso!\nResposta do servidor: " +
+          JSON.stringify(result)
+      );
     } catch (error) {
       alert("Erro ao enviar código: " + error.message);
     }
   };
 
-  // Função para abrir a tela de login
-  const abrirLogin = () => setMostrarLogin(true);
-
-  // Função para fechar a tela de login (cancelar)
-  const fecharLogin = () => setMostrarLogin(false);
-
   // Função chamada no login bem-sucedido
-  const handleLogin = (usuario) => {
-    setUsuarioLogado(usuario);
+  const handleLogin = async (usuario) => {
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: usuario.email,
+          senha: usuario.senha,
+        }),
+      });
+
+      if (!response.ok) throw new Error("Erro ao logar");
+
+      const result = await response.json();
+      alert(
+        "Usuário logado com sucesso!\nResposta do servidor: " +
+          JSON.stringify(result)
+      );
+
+      setUsuarioLogado(result.usuario); // Use o objeto retornado do backend
+    } catch (error) {
+      alert("Erro ao logar: " + error.message);
+    }
+
     setMostrarLogin(false);
   };
+
+  const handleCadastro = async (usuario) => {
+  try {
+    const response = await fetch("http://localhost:5000/api/auth/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        nome: usuario.nome,
+        email: usuario.email,
+        senha: usuario.senha,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Erro ao cadastrar");
+    }
+
+    const result = await response.json();
+    alert(
+      "Usuário cadastrado com sucesso!\nResposta do servidor: " +
+        JSON.stringify(result)
+    );
+    setUsuarioLogado(usuario);
+  } catch (error) {
+    alert("Erro ao cadastrar: " + error.message);
+  }
+
+  setMostrarCadastro(false);
+};
+
 
   return (
     <>
@@ -133,14 +191,18 @@ function TelaInicial() {
         <h1 className="title">CodeQuest</h1>
 
         {!usuarioLogado && (
-  <div>
-    <button className="cadastro-button" onClick={abrirCadastro}>Cadastro</button>
-    <button className="login-button" onClick={abrirLogin}>
-      Login
-    </button>
-  </div>
-)}
-        {usuarioLogado && <div className="welcome-message">Olá, {usuarioLogado.email}</div>}
+          <div>
+            <button className="cadastro-button" onClick={abrirCadastro}>
+              Cadastro
+            </button>
+            <button className="login-button" onClick={abrirLogin}>
+              Login
+            </button>
+          </div>
+        )}
+        {usuarioLogado && (
+          <div className="welcome-message">Olá, {usuarioLogado.email}</div>
+        )}
       </header>
 
       {/* Container principal */}
@@ -155,11 +217,17 @@ function TelaInicial() {
         <div className="divider" onMouseDown={handleMouseDown}></div>
 
         {/* Caixa direita - editor */}
-        <div className="editor-box right-box" style={{ width: `calc(100% - ${leftWidth + 10}px)` }}>
+        <div
+          className="editor-box right-box"
+          style={{ width: `calc(100% - ${leftWidth + 10}px)` }}
+        >
           <div className="editor-header">
             <h2 className="editor-title">Editor</h2>
             <div className="menu-container">
-              <button className="menu-button" onClick={() => setMenuOpen((open) => !open)}>
+              <button
+                className="menu-button"
+                onClick={() => setMenuOpen((open) => !open)}
+              >
                 {selectedLanguage || "Linguagens"}
               </button>
               {menuOpen && (
@@ -183,7 +251,9 @@ function TelaInicial() {
 
           <textarea
             className="code-editor"
-            placeholder={`Digite seu código em ${selectedLanguage || "alguma linguagem"}...`}
+            placeholder={`Digite seu código em ${
+              selectedLanguage || "alguma linguagem"
+            }...`}
             value={code}
             onChange={(e) => setCode(e.target.value)}
             spellCheck={false}
@@ -204,11 +274,10 @@ function TelaInicial() {
 
       {/* Overlay do cadastro */}
       {mostrarCadastro && (
-  <div className="login-overlay">
-    <Cadastro onLogin={handleLogin} onCancel={fecharCadastro} />
-  </div>
-)}
-
+        <div className="login-overlay">
+          <Cadastro onRegister={handleCadastro} onCancel={fecharCadastro} />
+        </div>
+      )}
 
       {/* Footer */}
       <footer className="footer">

@@ -16,7 +16,7 @@ export default function Cadastro({ onRegister, onCancel }) {
     }
 
     setErro('');
-    onRegister?.({ nome, email });
+    onRegister?.({ nome, email, senha });
   };
 
   return (
