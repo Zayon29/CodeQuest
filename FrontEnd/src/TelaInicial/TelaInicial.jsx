@@ -59,22 +59,6 @@ function TelaInicial() {
     setMenuOpen(false);
   };
 
-  // Função para obter o desafio atual
-  const obterDesafioAtual = async () => {
-    try {
-      const response = await fetch("http://localhost:5000/api/desafioAtual");
-      if (!response.ok) {
-        throw new Error("Erro ao buscar o desafio atual");
-      }
-      const desafio = await response.json();
-      return desafio._id; // retorna o ID do desafio
-    } catch (error) {
-      console.error(error);
-      alert("Erro ao buscar o desafio atual.");
-      return null;
-    }
-  };
-
   // Enviar código
   const handleSubmit = async () => {
     if (!selectedLanguage || !code.trim()) {
@@ -106,14 +90,9 @@ function TelaInicial() {
         selectedLanguageId = null;
     }
 
-    try {
-      // Busca o desafio atual antes de enviar o código
-      const desafioId = await obterDesafioAtual();
-      if (!desafioId) {
-        alert("Não foi possível obter o desafio atual.");
-        return;
-      }
+    const desafioId = "6824cc9366c4b2f992d3e2e2";
 
+    try {
       const response = await fetch("http://localhost:5000/api/submit", {
         method: "POST",
         headers: {
@@ -154,13 +133,13 @@ function TelaInicial() {
         <h1 className="title">CodeQuest</h1>
 
         {!usuarioLogado && (
-          <div>
-            <button className="cadastro-button" onClick={abrirCadastro}>Cadastro</button>
-            <button className="login-button" onClick={abrirLogin}>
-              Login
-            </button>
-          </div>
-        )}
+  <div>
+    <button className="cadastro-button" onClick={abrirCadastro}>Cadastro</button>
+    <button className="login-button" onClick={abrirLogin}>
+      Login
+    </button>
+  </div>
+)}
         {usuarioLogado && <div className="welcome-message">Olá, {usuarioLogado.email}</div>}
       </header>
 
@@ -225,10 +204,11 @@ function TelaInicial() {
 
       {/* Overlay do cadastro */}
       {mostrarCadastro && (
-        <div className="login-overlay">
-          <Cadastro onLogin={handleLogin} onCancel={fecharCadastro} />
-        </div>
-      )}
+  <div className="login-overlay">
+    <Cadastro onLogin={handleLogin} onCancel={fecharCadastro} />
+  </div>
+)}
+
 
       {/* Footer */}
       <footer className="footer">
