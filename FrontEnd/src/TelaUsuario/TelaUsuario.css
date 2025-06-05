@@ -29,7 +29,7 @@
 
 .info-item {
   display: flex;
-  margin-bottom: 15px;
+  margin-bottom: 30px;
   font-size: 1.1rem;
 }
 
@@ -62,4 +62,60 @@
 .perfil-close-button:hover {
   transform: scale(1.05);
   box-shadow: 0 0 15px #ff00cc, 0 0 20px #3333ff;
+}
+
+/* Estilos da tabela */
+.tabela-desafios {
+  margin-top: 25px;
+  width: 100%;
+}
+
+.tabela-desafios h3 {
+  color: #ff00cc;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.desafios-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: white;
+  margin-bottom: 20px;
+}
+
+.desafios-table th, 
+.desafios-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #3333ff50;
+}
+
+.desafios-table th {
+  background-color: #3333ff20;
+  color: #ff00cc;
+}
+
+.desafios-table tr:hover {
+  background-color: #3333ff10;
+}
+
+/* Classes de dificuldade */
+.dificuldade-fácil {
+  color: #0ff0fc;
+  text-shadow: 0 0 5px #0ff0fc80;
+}
+
+.dificuldade-médio {
+  color: #f355ff;
+  text-shadow: 0 0 5px #f355ff80;
+}
+
+.dificuldade-difícil {
+  color: #ff00aa; 
+  text-shadow: 0 0 5px #ff00aa80;
+}
+.sem-desafios {
+  text-align: center;
+  padding: 20px;
+  color: #ff66cc;
 }
