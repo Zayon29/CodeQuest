@@ -1,6 +1,7 @@
 import "./TelaInicial.css";
 import Login from "../Login/Login";
 import Cadastro from "../Login/Cadastro";
+import PerfilUsuario from '../TelaUsuario/TelaUsuario';
 import React, { useState, useEffect } from "react";
 
 function TelaInicial() {
@@ -15,6 +16,11 @@ function TelaInicial() {
   const [mostrarLogin, setMostrarLogin] = useState(false);
   const [usuarioLogado, setUsuarioLogado] = useState(null);
   const [mostrarCadastro, setMostrarCadastro] = useState(false);
+
+  const [mostrarPopupCadastro, setMostrarPopupCadastro] = useState(false);
+  const [mensagemPopup, setMensagemPopup] = useState("");
+
+  const [mostrarPerfil, setMostrarPerfil] = useState(false);
 
   const abrirCadastro = () => setMostrarCadastro(true);
   const fecharCadastro = () => setMostrarCadastro(false);
@@ -52,14 +58,24 @@ function TelaInicial() {
         throw new Error(result.message || "Erro ao cadastrar");
       }
 
-      alert(
-        "Usuário cadastrado com sucesso!\nResposta do servidor: " +
-          JSON.stringify(result)
-      );
+      //alert(
+      //  "Usuário cadastrado com sucesso!\nResposta do servidor: " +
+      //    JSON.stringify(result)
+      //);
+
+      setMensagemPopup(`Cadastro realizado com sucesso! Bem-vindo, ${usuario.nome}!`);
+      setMostrarPopupCadastro(true);
+
       setUsuarioLogado({
         email: usuario.email,
         nome: usuario.nome
       });
+
+      // Fecha o formulário de cadastro após 2 segundos
+    setTimeout(() => {
+      setMostrarCadastro(false);
+    }, 2000);
+
     } catch (error) {
       alert("Erro ao cadastrar: " + error.message);
     }
@@ -185,6 +201,12 @@ function TelaInicial() {
         {usuarioLogado && (
           <div className="user-container">
             <div className="welcome-message">Olá, {usuarioLogado.nome || usuarioLogado.email}</div>
+            <button 
+      className="perfil-button" 
+      onClick={() => setMostrarPerfil(true)}
+    >
+      Meu Perfil
+    </button>
             <button className="logout-button" onClick={handleLogout}>
               Logout
             </button>
@@ -259,6 +281,20 @@ function TelaInicial() {
           <Cadastro onRegister={handleCadastro} onCancel={fecharCadastro} />
         </div>
       )}
+
+      {mostrarPopupCadastro && (
+      <div className="cadastro-popup">
+        <p>{mensagemPopup}</p>
+        <button onClick={() => setMostrarPopupCadastro(false)}>OK</button>
+      </div>
+    )}
+
+    {mostrarPerfil && (
+  <PerfilUsuario 
+    usuario={usuarioLogado} 
+    onClose={() => setMostrarPerfil(false)} 
+  />
+)}
 
       <footer className="footer">
         <p>Desenvolvido por Vitor, Zayon e Thomas • CodeQuest © 2025</p>

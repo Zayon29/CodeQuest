@@ -348,16 +348,83 @@ h2 {
 }
 
 .logout-button {
-  padding: 8px 15px;
-  background-color: #f44336;
+  background:linear-gradient(90deg, #555555, #222222);
   color: white;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 25px;
   border: none;
-  border-radius: 4px;
   cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.3s;
+  font-family: 'Orbitron', sans-serif;
+  box-shadow: 0 0 10px #555555;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .logout-button:hover {
-  background-color: #d32f2f;
+  background: linear-gradient(90deg, #222222, #555555);
+  box-shadow: 0 0 20px #888888;
+}
+
+
+
+/* Estilos para o pop-up de cadastro */
+.cadastro-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(135deg, #1e1e2f, #2e2e4d);
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 0 25px rgba(255, 0, 204, 0.6);
+  z-index: 10000;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  border: 2px solid #ff00cc;
+  animation: neonGlow 2s infinite ease-in-out;
+}
+
+.cadastro-popup p {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #fff;
+  margin-bottom: 20px;
+}
+
+.cadastro-popup button {
+  background: linear-gradient(90deg, #ff00cc, #3333ff);
+  color: white;
+  border: none;
+  padding: 10px 25px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: bold;
+  box-shadow: 0 0 10px #ff00cc;
+  transition: all 0.3s ease;
+}
+
+.cadastro-popup button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px #ff00cc, 0 0 20px #3333ff;
+}
+
+.perfil-button {
+  background: linear-gradient(90deg, #3333ff, #ff00cc);
+  color: white;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 25px;
+  border: none;
+  cursor: pointer;
+  font-family: 'Orbitron', sans-serif;
+  box-shadow: 0 0 10px #3333ff;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+
+}
+
+.perfil-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px #3333ff, 0 0 20px #ff00cc;
 }
