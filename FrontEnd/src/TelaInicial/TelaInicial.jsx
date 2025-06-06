@@ -2,6 +2,7 @@ import "./TelaInicial.css";
 import Login from "../Login/Login";
 import Cadastro from "../Login/Cadastro";
 import PerfilUsuario from "../TelaUsuario/TelaUsuario";
+import ErrorPopup from '../PopUP/ErrorPopup';
 import React, { useState, useEffect } from "react";
 
 function TelaInicial() {
@@ -24,10 +25,23 @@ function TelaInicial() {
 
   const [desafioAtual, setDesafioAtual] = useState(null);
 
+  const [mostrarErro, setMostrarErro] = useState(false);
+  const [mensagemErro, setMensagemErro] = useState('');
+
   const abrirCadastro = () => setMostrarCadastro(true);
   const fecharCadastro = () => setMostrarCadastro(false);
   const abrirLogin = () => setMostrarLogin(true);
   const fecharLogin = () => setMostrarLogin(false);
+
+  const mostrarError = (mensagem) => {
+  setMensagemErro(mensagem);
+  setMostrarErro(true);
+  
+  // Fecha após 2 segundos
+  setTimeout(() => {
+    setMostrarErro(false);
+  }, 5000);
+};
 
   const handleLogin = (usuario) => {
     setUsuarioLogado(usuario);
@@ -80,7 +94,7 @@ function TelaInicial() {
         setMostrarCadastro(false);
       }, 2000);
     } catch (error) {
-      alert("Erro ao cadastrar: " + error.message);
+      mostrarError("Erro ao cadastrar: " + error.message);
     }
 
     setMostrarCadastro(false);
@@ -136,7 +150,7 @@ function TelaInicial() {
         const dados = await resposta.json();
         setDesafioAtual(dados);
       } catch (erro) {
-        console.error("Erro ao carregar desafio:", erro.message);
+        mostrarError("Erro ao carregar desafio:", erro.message);
       }
     };
 
@@ -145,7 +159,7 @@ function TelaInicial() {
 
   const handleSubmit = async () => {
     if (!selectedLanguage || !code.trim()) {
-      alert(
+      mostrarError(
         "Selecione uma linguagem e escreva algum código antes de realizar o envio."
       );
       return;
@@ -202,7 +216,7 @@ function TelaInicial() {
           JSON.stringify(result)
       );
     } catch (error) {
-      alert("Erro ao enviar código: " + error.message);
+      mostrarError("Erro ao enviar código: " + error.message);
     }
   };
 
@@ -321,6 +335,13 @@ function TelaInicial() {
           onClose={() => setMostrarPerfil(false)}
         />
       )}
+
+   {mostrarErro && (
+  <ErrorPopup 
+    mensagem={mensagemErro}  // ← Mantenha 'mensagem' aqui
+    onClose={() => setMostrarErro(false)} 
+  />
+)}
 
       <footer className="footer">
         <p>Desenvolvido por Vitor, Zayon e Thomas • CodeQuest © 2025</p>
