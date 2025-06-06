@@ -1,7 +1,7 @@
 import "./TelaInicial.css";
 import Login from "../Login/Login";
 import Cadastro from "../Login/Cadastro";
-import PerfilUsuario from '../TelaUsuario/TelaUsuario';
+import PerfilUsuario from "../TelaUsuario/TelaUsuario";
 import React, { useState, useEffect } from "react";
 
 function TelaInicial() {
@@ -21,6 +21,8 @@ function TelaInicial() {
   const [mensagemPopup, setMensagemPopup] = useState("");
 
   const [mostrarPerfil, setMostrarPerfil] = useState(false);
+
+  const [desafioAtual, setDesafioAtual] = useState(null);
 
   const abrirCadastro = () => setMostrarCadastro(true);
   const fecharCadastro = () => setMostrarCadastro(false);
@@ -63,19 +65,20 @@ function TelaInicial() {
       //    JSON.stringify(result)
       //);
 
-      setMensagemPopup(`Cadastro realizado com sucesso! Bem-vindo, ${usuario.nome}!`);
+      setMensagemPopup(
+        `Cadastro realizado com sucesso! Bem-vindo, ${usuario.nome}!`
+      );
       setMostrarPopupCadastro(true);
 
       setUsuarioLogado({
         email: usuario.email,
-        nome: usuario.nome
+        nome: usuario.nome,
       });
 
       // Fecha o formulário de cadastro após 2 segundos
-    setTimeout(() => {
-      setMostrarCadastro(false);
-    }, 2000);
-
+      setTimeout(() => {
+        setMostrarCadastro(false);
+      }, 2000);
     } catch (error) {
       alert("Erro ao cadastrar: " + error.message);
     }
@@ -121,6 +124,25 @@ function TelaInicial() {
     setMenuOpen(false);
   };
 
+  useEffect(() => {
+    const buscarDesafio = async () => {
+      try {
+        const resposta = await fetch(
+          "http://localhost:5000/api/desafios/desafioAtual"
+        );
+        if (!resposta.ok) {
+          throw new Error("Erro ao buscar o desafio");
+        }
+        const dados = await resposta.json();
+        setDesafioAtual(dados);
+      } catch (erro) {
+        console.error("Erro ao carregar desafio:", erro.message);
+      }
+    };
+
+    buscarDesafio();
+  }, []);
+
   const handleSubmit = async () => {
     if (!selectedLanguage || !code.trim()) {
       alert(
@@ -153,9 +175,10 @@ function TelaInicial() {
         selectedLanguageId = null;
     }
 
-    const desafioId = "6824cc9366c4b2f992d3e2e2";
+    const desafioId = desafioAtual._id
 
     try {
+
       const response = await fetch("http://localhost:5000/api/submit", {
         method: "POST",
         headers: {
@@ -200,13 +223,15 @@ function TelaInicial() {
         )}
         {usuarioLogado && (
           <div className="user-container">
-            <div className="welcome-message">Olá, {usuarioLogado.nome || usuarioLogado.email}</div>
-            <button 
-      className="perfil-button" 
-      onClick={() => setMostrarPerfil(true)}
-    >
-      Meu Perfil
-    </button>
+            <div className="welcome-message">
+              Olá, {usuarioLogado.nome || usuarioLogado.email}
+            </div>
+            <button
+              className="perfil-button"
+              onClick={() => setMostrarPerfil(true)}
+            >
+              Meu Perfil
+            </button>
             <button className="logout-button" onClick={handleLogout}>
               Logout
             </button>
@@ -216,8 +241,9 @@ function TelaInicial() {
 
       <div className="center-container">
         <div className="box left-box" style={{ width: leftWidth }}>
-          <h2>Texto</h2>
-          <p>Esse é um texto estático na caixa da esquerda.</p>
+          <h2>{desafioAtual ? desafioAtual.titulo : "Carregando desafio..."}</h2>
+          <p>{desafioAtual ? desafioAtual.descricao : "Aguarde enquanto o desafio é carregado."}</p>
+          <h4>Dificuldade do desafio: {desafioAtual ? desafioAtual.dificuldade : "Carregando dificuldade do desafio"}</h4>
         </div>
 
         <div className="divider" onMouseDown={handleMouseDown}></div>
@@ -283,18 +309,18 @@ function TelaInicial() {
       )}
 
       {mostrarPopupCadastro && (
-      <div className="cadastro-popup">
-        <p>{mensagemPopup}</p>
-        <button onClick={() => setMostrarPopupCadastro(false)}>OK</button>
-      </div>
-    )}
+        <div className="cadastro-popup">
+          <p>{mensagemPopup}</p>
+          <button onClick={() => setMostrarPopupCadastro(false)}>OK</button>
+        </div>
+      )}
 
-    {mostrarPerfil && (
-  <PerfilUsuario 
-    usuario={usuarioLogado} 
-    onClose={() => setMostrarPerfil(false)} 
-  />
-)}
+      {mostrarPerfil && (
+        <PerfilUsuario
+          usuario={usuarioLogado}
+          onClose={() => setMostrarPerfil(false)}
+        />
+      )}
 
       <footer className="footer">
         <p>Desenvolvido por Vitor, Zayon e Thomas • CodeQuest © 2025</p>

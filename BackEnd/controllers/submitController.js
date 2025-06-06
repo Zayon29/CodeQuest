@@ -54,7 +54,7 @@ const submeterCodigo = async (req, res) => {
         source_code,
         language_id: Number(language_id),
         stdin: desafio.entradaExemplo,
-        expected_output: desafio.saidaExemplo
+        expected_output: desafio.saidaExemplo.replace(/\\n/g, '\n'),
       },
       { 
         headers,
