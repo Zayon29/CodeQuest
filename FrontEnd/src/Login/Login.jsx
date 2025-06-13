@@ -22,6 +22,7 @@ export default function Login({ onLogin, onCancel }) {
     });
 
     const data = await response.json();
+    console.log("Resposta do login:", data);
 
     if (!response.ok) {
       throw new Error(data.message || "Erro ao logar");

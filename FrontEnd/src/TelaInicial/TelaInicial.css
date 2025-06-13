@@ -428,3 +428,22 @@ h2 {
   transform: scale(1.05);
   box-shadow: 0 0 15px #3333ff, 0 0 20px #ff00cc;
 }
+
+.admin-button {
+  background: linear-gradient(90deg, #3333ff, #ff00cc);
+  color: white;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 25px;
+  border: none;
+  cursor: pointer;
+  font-family: 'Orbitron', sans-serif;
+  box-shadow: 0 0 10px #3333ff;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+
+}
+
+.admin-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px #3333ff, 0 0 20px #ff00cc;
+}

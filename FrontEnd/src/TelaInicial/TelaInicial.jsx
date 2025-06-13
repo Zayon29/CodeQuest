@@ -2,6 +2,7 @@ import "./TelaInicial.css";
 import Login from "../Login/Login";
 import Cadastro from "../Login/Cadastro";
 import PerfilUsuario from "../TelaUsuario/TelaUsuario";
+import PerfilAdmin from "../TelaUsuario/TelaAdmin"
 import ErrorPopup from '../PopUP/ErrorPopup';
 import React, { useState, useEffect } from "react";
 
@@ -23,6 +24,8 @@ function TelaInicial() {
 
   const [mostrarPerfil, setMostrarPerfil] = useState(false);
 
+  const [mostrarPerfilAdmin, setMostrarPerfilAdmin] = useState(false)
+
   const [desafioAtual, setDesafioAtual] = useState(null);
 
   const [mostrarErro, setMostrarErro] = useState(false);
@@ -32,6 +35,8 @@ function TelaInicial() {
   const fecharCadastro = () => setMostrarCadastro(false);
   const abrirLogin = () => setMostrarLogin(true);
   const fecharLogin = () => setMostrarLogin(false);
+  const abrirPerfilAdmin = () => setMostrarPerfilAdmin(true);
+  const fecharPerfilAdmin = () => setMostrarPerfilAdmin(false);
 
   const mostrarError = (mensagem) => {
   setMensagemErro(mensagem);
@@ -73,11 +78,6 @@ function TelaInicial() {
       if (!response.ok) {
         throw new Error(result.message || "Erro ao cadastrar");
       }
-
-      //alert(
-      //  "Usuário cadastrado com sucesso!\nResposta do servidor: " +
-      //    JSON.stringify(result)
-      //);
 
       setMensagemPopup(
         `Cadastro realizado com sucesso! Bem-vindo, ${usuario.nome}!`
@@ -142,7 +142,7 @@ function TelaInicial() {
     const buscarDesafio = async () => {
       try {
         const resposta = await fetch(
-          "http://localhost:5000/api/desafios/desafioAtual"
+          "http://localhost:5000/api/desafios/atual"
         );
         if (!resposta.ok) {
           throw new Error("Erro ao buscar o desafio");
@@ -246,6 +246,14 @@ function TelaInicial() {
             >
               Meu Perfil
             </button>
+            {usuarioLogado.isAdmin && (
+              <button
+              className="admin-button"
+              onClick={() => setMostrarPerfilAdmin(true)}
+            >
+              PerfilAdmin
+            </button>
+            )}
             <button className="logout-button" onClick={handleLogout}>
               Logout
             </button>
@@ -333,6 +341,12 @@ function TelaInicial() {
         <PerfilUsuario
           usuario={usuarioLogado}
           onClose={() => setMostrarPerfil(false)}
+        />
+      )}
+
+      {mostrarPerfilAdmin && (
+        <PerfilAdmin
+          onClose={() => setMostrarPerfilAdmin(false)}
         />
       )}
 

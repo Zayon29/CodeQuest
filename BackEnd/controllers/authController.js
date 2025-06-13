@@ -13,8 +13,13 @@ const register = async (req, res) => {
 
     const senhaHash = await bcrypt.hash(senha, 10);
 
-    const novoUsuario = new User({ nome, email, senha: senhaHash });
-    await novoUsuario.save();
+    if (email.endsWith('@codequest.com')) {
+      const novoUsuarioAdmin = new User({nome, email, senha: senhaHash, isAdmin: true})
+      await novoUsuarioAdmin.save();
+    } else {
+      const novoUsuario = new User({ nome, email, senha: senhaHash });
+      await novoUsuario.save();
+    }
 
     res.status(201).json({ msg: 'Usuário criado com sucesso!' });
   } catch (err) {
@@ -43,7 +48,8 @@ const login = async (req, res) => {
       usuario: {
         id: usuario._id,
         nome: usuario.nome,
-        email: usuario.email
+        email: usuario.email,
+        isAdmin: usuario.isAdmin,
       }
     });
   } catch (err) {

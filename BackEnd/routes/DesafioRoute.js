@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const {criarDesafio,listarDesafios,desafioAtual,atualizarDesafio,deletarDesafio} = require('../controllers/desafioController');
-const verificarAdmin = require('../middlewares/verificarAdmin'); // middleware que verifica se o usuário é admin
+const verificarAdmin = require('../middleware/verificarAdmin'); // middleware que verifica se o usuário é admin
 
 // Privado para o  admin poder fazer o crud
 router.post('/', verificarAdmin, criarDesafio);
