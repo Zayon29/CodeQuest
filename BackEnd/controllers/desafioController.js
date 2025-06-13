@@ -42,4 +42,35 @@ const desafioAtual = async (req, res) => {
   }
 };
 
-module.exports = { criarDesafio, listarDesafios, desafioAtual };
+const atualizarDesafio = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const desafioAtualizado = await Desafio.findByIdAndUpdate(id, req.body, {
+      new: true,
+      runValidators: true
+    });
+    if (!desafioAtualizado) {
+      return res.status(404).json({ message: 'Desafio não encontrado.' });
+    }
+    res.status(200).json(desafioAtualizado);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
+const deletarDesafio = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const desafio = await Desafio.findByIdAndDelete(id);
+    if (!desafio) {
+      return res.status(404).json({ message: 'Desafio não encontrado' });
+    }
+    res.status(200).json({ message: 'Desafio deletado' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+
+
+module.exports = { criarDesafio, listarDesafios, desafioAtual,  atualizarDesafio, deletarDesafio };

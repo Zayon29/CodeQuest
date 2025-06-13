@@ -5,7 +5,10 @@ const UserSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   senha: { type: String, required: true },
   pontos: { type: Number, default: 0 },
-  desafiosResolvidos: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Challenge' }]
+  desafiosResolvidos: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Challenge' }],
+  
+  // campo de admin
+  isAdmin: { type: Boolean, default: false }
 });
 
 module.exports = mongoose.model('User', UserSchema);
