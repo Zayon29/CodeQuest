@@ -248,10 +248,10 @@ function TelaInicial() {
             </button>
             {usuarioLogado.isAdmin && (
               <button
-              className="admin-button"
+              className="perfil-button"
               onClick={() => setMostrarPerfilAdmin(true)}
             >
-              PerfilAdmin
+              Perfil Admin
             </button>
             )}
             <button className="logout-button" onClick={handleLogout}>

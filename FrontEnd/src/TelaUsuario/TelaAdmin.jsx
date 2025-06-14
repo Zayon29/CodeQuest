@@ -1,39 +1,61 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './TelaAdmin.css';
+import GerenciarUsuarios from './Gerenciamento/GerenciarUsuarios';
+import GerenciarDesafios from './Gerenciamento/GerenciarDesafios';
 
 function TelaAdmin({ onClose }) {
+  const [telaAtiva, setTelaAtiva] = useState('principal'); // 'principal', 'usuarios', 'desafios'
+
+  const renderizarConteudo = () => {
+    switch(telaAtiva) {
+      case 'usuarios':
+        return <GerenciarUsuarios onBack={() => setTelaAtiva('principal')} />;
+      case 'desafios':
+        return <GerenciarDesafios onBack={() => setTelaAtiva('principal')} />;
+      default:
+        return (
+          <>
+            <h2 className="admin-title">Painel de Administração</h2>
+            <div className="admin-buttons-container">
+              <button 
+                className="admin-main-button"
+                onClick={() => setTelaAtiva('usuarios')}
+              >
+                <i className="button-icon">👥</i>
+                Gerenciar Usuários
+              </button>
+              
+              <button 
+                className="admin-main-button"
+                onClick={() => setTelaAtiva('desafios')}
+              >
+                <i className="button-icon">💻</i>
+                Gerenciar Desafios
+              </button>
+            </div>
+          </>
+        );
+    }
+  };
+
   return (
     <div className="admin-overlay">
       <div className="admin-container">
-        <h2 className="admin-title">Painel de Administração</h2>
+        {renderizarConteudo()}
         
-        <div className="admin-sections">
-          {/* Seção de Usuários */}
-          <div className="admin-section">
-            <h3 className="section-title">Gerenciar Usuários</h3>
-            <div className="crud-buttons">
-              <button className="admin-button create">Criar Usuário</button>
-              <button className="admin-button read">Listar Usuários</button>
-              <button className="admin-button update">Editar Usuário</button>
-              <button className="admin-button delete">Remover Usuário</button>
-            </div>
-          </div>
-          
-          {/* Seção de Desafios */}
-          <div className="admin-section">
-            <h3 className="section-title">Gerenciar Desafios</h3>
-            <div className="crud-buttons">
-              <button className="admin-button create">Novo Desafio</button>
-              <button className="admin-button read">Ver Desafios</button>
-              <button className="admin-button update">Editar Desafio</button>
-              <button className="admin-button delete">Excluir Desafio</button>
-            </div>
-          </div>
-        </div>
-        
-        <button className="admin-close-button" onClick={onClose}>
-          Voltar
-        </button>
+        {/* Botão Voltar funciona diferente dependendo da tela */}
+        {telaAtiva === 'principal' ? (
+          <button className="admin-close-button" onClick={onClose}>
+            Voltar
+          </button>
+        ) : (
+          <button 
+            className="admin-close-button" 
+            onClick={() => setTelaAtiva('principal')}
+          >
+            Voltar ao Painel
+          </button>
+        )}
       </div>
     </div>
   );
