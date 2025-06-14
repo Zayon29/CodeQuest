@@ -265,7 +265,9 @@ function TelaInicial() {
         <div className="box left-box" style={{ width: leftWidth }}>
           <h2>{desafioAtual ? desafioAtual.titulo : "Carregando desafio..."}</h2>
           <p>{desafioAtual ? desafioAtual.descricao : "Aguarde enquanto o desafio é carregado."}</p>
-          <h4>Dificuldade do desafio: {desafioAtual ? desafioAtual.dificuldade : "Carregando dificuldade do desafio"}</h4>
+          <p>Entrada Esperada: {desafioAtual ? desafioAtual.entradaExemplo : "Carregando entrada esperadas do desafio"}</p>
+          <p>Saída Esperada: {desafioAtual ? desafioAtual.saidaExemplo : "Carregando saida esperada do desafio"}</p>
+          <h3>Dificuldade do desafio: {desafioAtual ? desafioAtual.dificuldade : "Carregando dificuldade do desafio"}</h3>
         </div>
 
         <div className="divider" onMouseDown={handleMouseDown}></div>
