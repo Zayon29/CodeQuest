@@ -13,16 +13,29 @@ const register = async (req, res) => {
 
     const senhaHash = await bcrypt.hash(senha, 10);
 
-    if (email.endsWith('@codequest.com')) {
-      const novoUsuarioAdmin = new User({nome, email, senha: senhaHash, isAdmin: true})
-      await novoUsuarioAdmin.save();
-    } else {
-      const novoUsuario = new User({ nome, email, senha: senhaHash });
-      await novoUsuario.save();
-    }
+    const novoUsuario = new User({
+      nome,
+      email,
+      senha: senhaHash,
+      isAdmin: email.endsWith('@codequest.com')
+    })
 
-    res.status(201).json({ msg: 'Usuário criado com sucesso!' });
+    await novoUsuario.save()
+
+    const token = jwt.sign({ id: novoUsuario._id}, process.env.JWT_SECRET, {expiresIn: '1d'});
+
+    res.status(201).json({
+      msg: 'Usuário criado com sucesso!',
+      token,
+      usuario: {
+        id: novoUsuario._id,
+        nome: novoUsuario.nome,
+        email: novoUsuario.email,
+        isAdmin: novoUsuario.isAdmin,
+      }
+    });
   } catch (err) {
+    console.error('Erro no cadastro do usuário: ', err)
     res.status(500).json({ msg: 'Erro no servidor.' });
   }
 };

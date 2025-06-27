@@ -76,25 +76,22 @@ function TelaInicial() {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.message || "Erro ao cadastrar");
+        throw new Error(result.msg || "Erro ao cadastrar");
       }
 
+      setUsuarioLogado(result.usuario);
+
       setMensagemPopup(
-        `Cadastro realizado com sucesso! Bem-vindo, ${usuario.nome}!`
+        `Cadastro realizado com sucesso! Bem-vindo, ${result.usuario.nome}!`
       );
       setMostrarPopupCadastro(true);
-
-      setUsuarioLogado({
-        email: usuario.email,
-        nome: usuario.nome,
-      });
 
       // Fecha o formulário de cadastro após 2 segundos
       setTimeout(() => {
         setMostrarCadastro(false);
       }, 2000);
     } catch (error) {
-      mostrarError("Erro ao cadastrar: " + error.message);
+      mostrarError("Erro ao cadastrar: " + error.msg);
     }
 
     setMostrarCadastro(false);
