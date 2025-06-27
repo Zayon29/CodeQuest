@@ -1,6 +1,8 @@
+// src/components/Gerenciamento/GerenciarDesafios.jsx
 import React, { useState } from 'react';
-import DetalhesDesafio from './DetalhesDesafios'; // Corrigido: sem 's' no final
-import ConfirmationPopup from '../../PopUP/ConfirmationPopup'; // 1. Importe o pop-up
+import DetalhesDesafio from './DetalhesDesafios';
+import ConfirmationPopup from '../../PopUP/ConfirmationPopup';
+import CriarDesafios from './CriarDesafios'; // importe a nova tela
 import './GerenciarDesafios.css';
 
 const desafiosIniciais = [
@@ -12,17 +14,15 @@ const desafiosIniciais = [
 function GerenciarDesafios() {
   const [desafios, setDesafios] = useState(desafiosIniciais);
   const [desafioSelecionado, setDesafioSelecionado] = useState(null);
-
-  // 2. Adicione os estados para controlar o pop-up
   const [showConfirmPopup, setShowConfirmPopup] = useState(false);
   const [desafioParaDeletar, setDesafioParaDeletar] = useState(null);
+  const [criandoDesafio, setCriandoDesafio] = useState(false); // controla a tela de criação
 
   const handleSave = (desafioAtualizado) => {
     setDesafios(desafios.map(d => d.id === desafioAtualizado.id ? desafioAtualizado : d));
     setDesafioSelecionado(desafioAtualizado);
   };
 
-  // 3. Crie o novo conjunto de funções para a exclusão
   const handleDeleteRequest = (desafioId) => {
     setDesafioParaDeletar(desafioId);
     setShowConfirmPopup(true);
@@ -40,24 +40,54 @@ function GerenciarDesafios() {
     setDesafioParaDeletar(null);
   };
 
-  // Se um desafio foi selecionado, mostra a tela de detalhes
+  const handleCreateNewDesafio = (novoDesafio) => {
+    setDesafios([...desafios, novoDesafio]);
+    setCriandoDesafio(false);
+    setDesafioSelecionado(novoDesafio); // já abre o novo desafio criado para edição/detalhes
+  };
+
+  // Exibir tela de detalhes
   if (desafioSelecionado) {
     return (
-      <DetalhesDesafio
-        desafio={desafioSelecionado}
-        onBack={() => setDesafioSelecionado(null)}
-        onSave={handleSave}
-        onDelete={handleDeleteRequest} // 4. Passe a função correta para o onDelete
+      <>
+        <DetalhesDesafio
+          desafio={desafioSelecionado}
+          onBack={() => setDesafioSelecionado(null)}
+          onSave={handleSave}
+          onDelete={handleDeleteRequest}
+        />
+
+        {showConfirmPopup && (
+          <ConfirmationPopup
+            mensagem="Tem certeza que deseja excluir este desafio? Os dados relacionados a ele podem ser perdidos."
+            onConfirm={handleConfirmDelete}
+            onCancel={handleCancelDelete}
+          />
+        )}
+      </>
+    );
+  }
+
+  // Exibir tela de criação
+  if (criandoDesafio) {
+    return (
+      <CriarDesafios
+        onCreate={handleCreateNewDesafio}
+        onCancel={() => setCriandoDesafio(false)}
       />
     );
   }
 
-  // Senão, mostra a lista de desafios
+  // Exibir lista de desafios com botão para criar
   return (
     <div className="gerenciar-view">
-      <h2 className="gerenciar-title">Gerenciamento de Desafios</h2>
+      <div className="view-header">
+        <h2 className="gerenciar-title">Gerenciamento de Desafios</h2>
+        <button className="btn-create" onClick={() => setCriandoDesafio(true)}>+ Novo Desafio</button>
+      </div>
+
       <p className="gerenciar-subtitle">Clique em um desafio para ver os detalhes e editar.</p>
-      
+
       <div className="list-box">
         <div className="list-header">
           <span>Título do Desafio</span>
@@ -65,7 +95,11 @@ function GerenciarDesafios() {
         </div>
         <div className="challenge-list">
           {desafios.map(desafio => (
-            <div key={desafio.id} className="challenge-item" onClick={() => setDesafioSelecionado(desafio)}>
+            <div
+              key={desafio.id}
+              className="challenge-item"
+              onClick={() => setDesafioSelecionado(desafio)}
+            >
               <span className="challenge-title">{desafio.titulo}</span>
               <span className={`difficulty-badge difficulty-${desafio.dificuldade}`}>
                 {desafio.dificuldade}
@@ -75,7 +109,6 @@ function GerenciarDesafios() {
         </div>
       </div>
 
-      {/* 5. Renderize o pop-up quando necessário */}
       {showConfirmPopup && (
         <ConfirmationPopup
           mensagem="Tem certeza que deseja excluir este desafio? Os dados relacionados a ele podem ser perdidos."

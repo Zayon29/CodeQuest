@@ -1,10 +1,9 @@
+// src/components/Gerenciamento/GerenciarUsuarios.jsx
 import React, { useState } from 'react';
 import DetalhesUsuario from './DetalhesUsuario';
-import ConfirmationPopup from '../../PopUP/ConfirmationPopup'; 
+import ConfirmationPopup from '../../PopUP/ConfirmationPopup';
 import './GerenciarUsuarios.css';
 
-// Dados de exemplo para visualização inicial. 
-// No futuro, você substituirá isso por uma chamada de API.
 const usuariosIniciais = [
   { 
     id: 1, 
@@ -56,72 +55,61 @@ const usuariosIniciais = [
   },
 ];
 
-
 function GerenciarUsuarios() {
   const [usuarios, setUsuarios] = useState(usuariosIniciais);
   const [usuarioSelecionado, setUsuarioSelecionado] = useState(null);
 
-  // Estados para controlar o pop-up de confirmação
   const [showConfirmPopup, setShowConfirmPopup] = useState(false);
   const [usuarioParaDeletar, setUsuarioParaDeletar] = useState(null);
-  
-  // Função para salvar as alterações feitas na tela de detalhes
+
   const handleSave = (usuarioAtualizado) => {
     setUsuarios(usuarios.map(u => u.id === usuarioAtualizado.id ? usuarioAtualizado : u));
-    setUsuarioSelecionado(usuarioAtualizado); 
+    setUsuarioSelecionado(usuarioAtualizado);
   };
-  
-   // PASSO 1: O botão "Deletar" na tela de detalhes chama esta função.
+
   const handleDeleteRequest = (usuarioId) => {
-    // O PONTO-CHAVE É AQUI: Esta função só faz DUAS coisas:
-    // 1. Guarda o ID do usuário que talvez será deletado.
     setUsuarioParaDeletar(usuarioId);
-    // 2. Manda o pop-up aparecer.
     setShowConfirmPopup(true);
-    
-    // ELA NÃO CHAMA setUsuarioSelecionado(null). Por isso, a tela de detalhes continua aberta.
   };
 
-  // PASSO 2: Se o usuário clica em "Confirmar" no pop-up, esta função é chamada.
   const handleConfirmDelete = () => {
-    // Agora sim, fazemos a lógica de exclusão...
     setUsuarios(usuarios.filter(u => u.id !== usuarioParaDeletar));
-    
-    // ...escondemos o pop-up...
     setShowConfirmPopup(false);
-    
-    // ...E FINALMENTE, fechamos a tela de detalhes, voltando para a lista.
-    setUsuarioSelecionado(null); 
-    
+    setUsuarioSelecionado(null);
     setUsuarioParaDeletar(null);
   };
-  
-  // PASSO 3: Se o usuário clica em "Cancelar" no pop-up, esta função é chamada.
+
   const handleCancelDelete = () => {
-    // Apenas escondemos o pop-up. O usuário continua na tela de detalhes.
     setShowConfirmPopup(false);
     setUsuarioParaDeletar(null);
   };
 
-
-  // Se um usuário foi selecionado, mostra a tela de detalhes dele
   if (usuarioSelecionado) {
     return (
-      <DetalhesUsuario 
-        usuario={usuarioSelecionado}
-        onBack={() => setUsuarioSelecionado(null)}
-        onSave={handleSave}
-        onDelete={handleDeleteRequest}
-      />
+      <>
+        <DetalhesUsuario 
+          usuario={usuarioSelecionado}
+          onBack={() => setUsuarioSelecionado(null)}
+          onSave={handleSave}
+          onDelete={handleDeleteRequest}
+        />
+        
+        {showConfirmPopup && (
+          <ConfirmationPopup
+            mensagem={`Tem certeza que deseja excluir o usuário "${usuarios.find(u => u.id === usuarioParaDeletar)?.nome}"? Esta ação não pode ser desfeita.`}
+            onConfirm={handleConfirmDelete}
+            onCancel={handleCancelDelete}
+          />
+        )}
+      </>
     );
   }
 
-  // Se nenhum usuário foi selecionado, mostra a lista
   return (
     <div className="gerenciar-view">
       <h2 className="gerenciar-title">Gerenciar Usuários</h2>
       <p className="gerenciar-subtitle">Clique em um usuário para ver os detalhes e editar.</p>
-      
+
       <div className="list-box">
         <div className="list-header">
           <span>Nome</span>
@@ -130,7 +118,11 @@ function GerenciarUsuarios() {
 
         <div className="user-list">
           {usuarios.map(user => (
-            <div key={user.id} className="user-item" onClick={() => setUsuarioSelecionado(user)}>
+            <div
+              key={user.id}
+              className="user-item"
+              onClick={() => setUsuarioSelecionado(user)}
+            >
               <span className="user-name">
                 {user.nome}
                 {user.isAdmin && <span className="admin-badge">Admin</span>}
@@ -141,7 +133,6 @@ function GerenciarUsuarios() {
         </div>
       </div>
 
-      {/* Renderiza o pop-up de confirmação apenas quando 'showConfirmPopup' for true */}
       {showConfirmPopup && (
         <ConfirmationPopup
           mensagem="Tem certeza que deseja excluir este usuário? Esta ação não pode ser desfeita."
