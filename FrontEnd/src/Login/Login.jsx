@@ -6,7 +6,9 @@ export default function Login({ onLogin, onCancel }) {
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("");
 
-  const handleSubmit = async (e) => {
+  // ARQUIVO: Login.jsx
+
+const handleSubmit = async (e) => {
   e.preventDefault();
 
   if (!email || !senha) {
@@ -22,23 +24,29 @@ export default function Login({ onLogin, onCancel }) {
     });
 
     const data = await response.json();
-    console.log("Resposta do login:", data);
 
     if (!response.ok) {
-      throw new Error(data.message || "Erro ao logar");
+      // Se a resposta não for OK, joga um erro com a mensagem do backend.
+      throw new Error(data.msg || "Erro ao tentar fazer login");
     }
 
+    // --- PONTO CRÍTICO ---
+    // Garante que ambos os itens sejam salvos no localStorage.
+    console.log("Salvando no localStorage:", { token: data.token, usuario: data.usuario });
     localStorage.setItem('token', data.token);
+    localStorage.setItem('usuario', JSON.stringify(data.usuario));
     
-    // Chama onLogin passando apenas os dados necessários
-    onLogin?.(data.usuario);
+    // Chama a função onLogin que veio do App.js (se ela existir)
+    // para que o App possa atualizar seu próprio estado.
+    if (onLogin) {
+      onLogin(data.usuario, data.token);
+    }
 
   } catch (error) {
     setErro(error.message);
     console.error("Erro no login:", error);
   }
 };
-
   return (
     <div className="login-container">
       <h2>Login</h2>

@@ -48,7 +48,9 @@ const login = async (req, res) => {
   const { email, senha } = req.body;
 
   try {
-    const usuario = await User.findOne({ email });
+    // Usamos .populate() para já carregar os desafios junto
+    const usuario = await User.findOne({ email }).populate('desafiosResolvidos');
+
     if (!usuario) {
       return res.status(400).json({ msg: 'Usuário não encontrado.' });
     }
@@ -58,19 +60,23 @@ const login = async (req, res) => {
       return res.status(400).json({ msg: 'Senha incorreta.' });
     }
 
-   const token = jwt.sign({ id: usuario._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
+    const token = jwt.sign({ id: usuario._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
 
-
+    // >>>>> A CORREÇÃO ESTÁ AQUI <<<<<
+    // Garantimos que a resposta JSON tem uma chave 'token' E uma chave 'usuario'
     res.status(200).json({
-      token,
+      token: token,
       usuario: {
         id: usuario._id,
         nome: usuario.nome,
         email: usuario.email,
         isAdmin: usuario.isAdmin,
+        desafiosResolvidos: usuario.desafiosResolvidos 
       }
     });
+
   } catch (err) {
+    console.error("Erro no login:", err);
     res.status(500).json({ msg: 'Erro no servidor.' });
   }
 };

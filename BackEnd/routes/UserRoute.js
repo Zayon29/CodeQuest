@@ -13,7 +13,6 @@ router.put('/:id', authMiddleware, verificarAdmin, atualizarUsuario);
 router.delete('/:id', authMiddleware, verificarAdmin, deletarUsuario);
 
 // ROTAS PARA USUÁRIO AUTENTICADO
-router.get('/perfil', authMiddleware, perfil);
 router.get('/desafios-resolvidos/:id', authMiddleware, getDesafiosResolvidos);
 router.post('/desafios-resolvidos/:id', authMiddleware, salvarDesafioResolvido);
 router.get('/perfil', authMiddleware, obterPerfil);
