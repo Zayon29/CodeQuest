@@ -86,7 +86,6 @@ const submeterCodigo = async (req, res) => {
       };
     }
 
-    // código foi aceito e o usuário está logado, salva como desafio resolvido
     if (statusCode === 3 && req.headers.authorization?.startsWith('Bearer ')) {
       const token = req.headers.authorization.split(' ')[1];
 
@@ -95,12 +94,27 @@ const submeterCodigo = async (req, res) => {
         const usuario = await User.findById(decoded.id);
 
         if (usuario) {
-          usuario.desafiosResolvidos.push({
-            desafioId: desafio._id,
-            titulo: desafio.titulo,
-            dificuldade: desafio.dificuldade,
-            linguagemUtilizada: language_id.toString(),
-          });
+          const jaResolvido = usuario.desafiosResolvidos.some(
+            (d) => d.desafioId.toString() === desafio._id.toString()
+          );
+
+          if (!jaResolvido) {
+            usuario.desafiosResolvidos.push({
+              desafioId: desafio._id,
+              titulo: desafio.titulo,
+              dificuldade: desafio.dificuldade,
+              linguagemUtilizada: language_id.toString(),
+            });
+
+            let pontosGanhos = 0;
+            switch (desafio.dificuldade) {
+              case 'fácil': pontosGanhos = 1; break;
+              case 'médio': pontosGanhos = 2; break;
+              case 'difícil': pontosGanhos = 4; break;
+            }
+
+            usuario.pontos = (usuario.pontos || 0) + pontosGanhos;
+          }
 
           await usuario.save();
         }

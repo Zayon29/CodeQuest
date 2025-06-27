@@ -37,16 +37,20 @@ function PerfilUsuario({ onClose }) {
 
         <div className="perfil-info">
           <div className="info-item">
-            <span className="info-label">Nome:</span>
+            <span>Nome: </span>
             <span className="info-value">{usuario.nome}</span>
           </div>
           <div className="info-item">
-            <span className="info-label">Email:</span>
+            <span>Email: </span>
             <span className="info-value">{usuario.email}</span>
           </div>
           <div className="info-item">
-            <span className="info-label">Desafios Completos:</span>
+            <span>Desafios Completos: </span>
             <span className="info-value">{desafiosResolvidos.length}</span>
+          </div>
+          <div className="info-item">
+            <span>Pontuação do Usuário: </span>
+            <span className="info-value">{usuario.pontos}</span>
           </div>
         </div>
 

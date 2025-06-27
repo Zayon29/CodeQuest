@@ -16,6 +16,7 @@ const register = async (req, res) => {
     const novoUsuario = new User({
       nome,
       email,
+      pontos,
       senha: senhaHash,
       isAdmin: email.endsWith('@codequest.com')
     });
@@ -33,6 +34,7 @@ const register = async (req, res) => {
         id: novoUsuario._id,
         nome: novoUsuario.nome,
         email: novoUsuario.email,
+        pontos: novoUsuario.pontos,
         isAdmin: novoUsuario.isAdmin,
       }
     });
@@ -62,14 +64,13 @@ const login = async (req, res) => {
 
     const token = jwt.sign({ id: usuario._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
 
-    // >>>>> A CORREÇÃO ESTÁ AQUI <<<<<
-    // Garantimos que a resposta JSON tem uma chave 'token' E uma chave 'usuario'
     res.status(200).json({
       token: token,
       usuario: {
         id: usuario._id,
         nome: usuario.nome,
         email: usuario.email,
+        pontos: usuario.pontos,
         isAdmin: usuario.isAdmin,
         desafiosResolvidos: usuario.desafiosResolvidos 
       }
