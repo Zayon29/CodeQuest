@@ -4,6 +4,7 @@ import Cadastro from "../Login/Cadastro";
 import PerfilUsuario from "../TelaUsuario/TelaUsuario";
 import PerfilAdmin from "../TelaUsuario/TelaAdmin";
 import ErrorPopup from '../PopUP/ErrorPopup';
+import ResultadoPopup from '../PopUP/ResultadoPopup';
 import React, { useState, useEffect } from "react";
 
 function TelaInicial() {
@@ -24,6 +25,9 @@ function TelaInicial() {
   const [desafioAtual, setDesafioAtual] = useState(null);
   const [mostrarErro, setMostrarErro] = useState(false);
   const [mensagemErro, setMensagemErro] = useState('');
+
+  const [mostrarResultado, setMostrarResultado] = useState(false);
+  const [dadosResultado, setDadosResultado] = useState(null);
 
   const abrirCadastro = () => setMostrarCadastro(true);
   const fecharCadastro = () => setMostrarCadastro(false);
@@ -164,35 +168,19 @@ function TelaInicial() {
 
       const result = await response.json();
 
-      if (!response.ok || !result.sucesso) {
-        mostrarError("Falha ao submeter código: " + (result.erro?.tipo || "Erro desconhecido"));
-        return;
+      if (!response.ok) {
+        throw new Error(result.message || "Erro ao processar código");
       }
 
-      alert("Código enviado com sucesso!\nStatus: " + result.status);
-
-      if (usuarioLogado?.id) {
-        const salvarResponse = await fetch(`http://localhost:5000/api/users/${usuarioLogado.id}/resolver`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            desafioId,
-            linguagemUtilizada: selectedLanguage,
-          }),
-        });
-
-        if (!salvarResponse.ok) {
-          console.warn("Desafio resolvido não pôde ser salvo.");
-        }
-      }
+      setDadosResultado(result);
+      setMostrarResultado(true);
 
     } catch (error) {
       mostrarError("Erro ao enviar código: " + error.message);
     }
   };
+
+
 
   return (
     <>
@@ -285,9 +273,18 @@ function TelaInicial() {
         <PerfilAdmin onClose={fecharPerfilAdmin} />
       )}
 
-      {mostrarErro && (
-        <ErrorPopup mensagem={mensagemErro} onClose={() => setMostrarErro(false)} />
-      )}
+   {mostrarErro && (
+  <ErrorPopup 
+    mensagem={mensagemErro}  // ← Mantenha 'mensagem' aqui
+    onClose={() => setMostrarErro(false)} 
+  />
+)}
+    {mostrarResultado && (
+  <ResultadoPopup 
+    resultado={dadosResultado} 
+    onClose={() => setMostrarResultado(false)} 
+  />
+)}
 
       <footer className="footer">
         <p>Desenvolvido por Vitor, Zayon e Thomas • CodeQuest © 2025</p>

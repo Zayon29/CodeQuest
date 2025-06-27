@@ -1,0 +1,121 @@
+/* src/components/Gerenciamento/GerenciarUsuarios.css */
+
+/* Container principal da view */
+.gerenciar-view {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.gerenciar-title {
+  color: #0ff0fc; /* Cor ciano para o título principal */
+  font-family: 'Orbitron', sans-serif;
+  font-size: 2rem;
+  text-shadow: 0 0 10px #0ff0fc80;
+  margin-bottom: 5px;
+}
+
+.gerenciar-subtitle {
+  color: #ccc;
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+}
+
+/* --- A "CAIXA" ESTILIZADA --- */
+.list-box {
+  background: rgba(26, 9, 51, 0.8); /* Fundo roxo escuro semi-transparente */
+  border: 2px solid #f355ff; /* Borda rosa/magenta */
+  box-shadow: 0 0 20px rgba(243, 85, 255, 0.5); /* Brilho neon */
+  border-radius: 15px; /* Bordas arredondadas */
+  padding: 20px;
+  
+  /* Flexbox para organizar o header e a lista internamente */
+  display: flex;
+  flex-direction: column;
+  height: 65vh; /* Altura fixa para a caixa */
+}
+
+/* Header da lista (Nome | Email) */
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f355ff80; /* Linha separadora */
+  color: #f355ff;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  /* Garante que o header não role com o conteúdo */
+  flex-shrink: 0; 
+}
+
+/* Lista de usuários com scroll */
+.user-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 15px;
+  overflow-y: auto; /* A rolagem acontece aqui! */
+  padding-right: 10px; /* Espaço para a barra de scroll */
+  /* Faz a lista ocupar todo o espaço vertical disponível na caixa */
+  flex-grow: 1;
+}
+
+.user-item {
+  background: rgba(45, 11, 90, 0.6);
+  padding: 18px 20px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  flex-shrink: 0; /* Evita que os itens encolham */
+}
+
+.user-item:hover {
+  background: rgba(78, 20, 156, 0.8);
+  border-color: #0ff0fc;
+  transform: scale(1.01);
+}
+
+.user-name {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #fff;
+}
+
+.user-email {
+  font-size: 1rem;
+  color: #ccc;
+}
+
+.admin-badge {
+  background-color: #0ff0fc;
+  color: #1a0933;
+  font-size: 0.7rem;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 10px;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+/* Scrollbar customizada */
+.user-list::-webkit-scrollbar {
+  width: 10px;
+}
+.user-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+.user-list::-webkit-scrollbar-thumb {
+  background-color: #f355ff;
+  border-radius: 10px;
+  border: 2px solid rgba(26, 9, 51, 0.8);
+}
+.user-list::-webkit-scrollbar-thumb:hover {
+  background-color: #0ff0fc;
+}

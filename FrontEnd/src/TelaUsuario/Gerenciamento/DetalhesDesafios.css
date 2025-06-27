@@ -1,0 +1,33 @@
+/* src/components/Gerenciamento/DetalhesDesafio.css */
+
+.challenge-detail-view-container { background: linear-gradient(145deg, #1f0a3d, #1a0b33); padding: 25px 35px; border-radius: 15px; width: 95%; max-width: 800px; margin: 0 auto; box-shadow: 0 0 40px rgba(243, 85, 255, 0.5); border: 2px solid #f355ff; display: flex; flex-direction: column; gap: 15px; }
+.detail-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 15px; border-bottom: 1px solid #f355ff30; }
+.detail-title { color: #f355ff; font-family: 'Orbitron', sans-serif; font-size: 1.5rem; margin: 0; text-shadow: 0 0 8px #f355ff80; }
+.btn { padding: 10px 25px; border: none; border-radius: 8px; font-weight: bold; font-family: 'Orbitron', sans-serif; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; font-size: 0.8rem; }
+.btn-back { background: transparent; border: 1px solid #888; color: #ccc; }
+.btn-back:hover { background: #555; color: white; }
+
+.detail-body { display: flex; flex-direction: column; gap: 10px; }
+
+/* Campos que ocupam a largura toda (título, descrição, etc.) */
+.detail-field-full { display: flex; flex-direction: column; gap: 8px; padding: 10px 0; border-bottom: 1px solid #f355ff1a; }
+/* Campos de alinhamento lateral (dificuldade) */
+.detail-field { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f355ff1a; }
+
+.detail-field-full label, .detail-field label { color: #0ff0fc; font-weight: bold; opacity: 0.9; }
+
+/* Estilos para inputs, textareas e selects */
+input[type="text"], textarea, select { background-color: rgba(0, 0, 0, 0.3); border: 1px solid #888; border-radius: 5px; padding: 10px; color: #fff; font-size: 1rem; width: 100%; box-sizing: border-box; }
+input[type="text"]:focus, textarea:focus, select:focus { outline: none; border-color: #0ff0fc; }
+textarea { resize: vertical; font-family: inherit; }
+select { appearance: none; background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2300f0ff%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right .7em top 50%; background-size: .65em auto; }
+
+.field-value { color: #fff; font-size: 1rem; }
+.field-value-multiline { color: #ddd; font-size: 1rem; white-space: pre-wrap; /* Mantém a formatação */ }
+.field-value-code { background-color: rgba(0,0,0,0.4); padding: 10px; border-radius: 5px; color: #a5ff78; font-family: 'Courier New', Courier, monospace; white-space: pre-wrap; }
+
+.detail-footer { display: flex; justify-content: flex-end; gap: 15px; padding-top: 15px; margin-top: auto; border-top: 1px solid #f355ff30; }
+.btn-edit { background: linear-gradient(45deg, #09c6f9, #05f0ff); color: #1a0933; box-shadow: 0 0 15px rgba(5, 240, 255, 0.4); }
+.btn-delete { background: linear-gradient(45deg, #ff3366, #fe5f88); color: white; box-shadow: 0 0 15px rgba(255, 51, 102, 0.4); }
+.btn-save { background: linear-gradient(45deg, #20e98f, #00f799); color: #1a0933; }
+.btn-cancel { background: #444; color: #ccc; }
