@@ -1,0 +1,66 @@
+/* src/components/TelaInicial/ResultadoDesafio.css */
+
+.resultado-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(26, 9, 51, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.resultado-container {
+  background: #1a0933;
+  padding: 30px 40px;
+  border-radius: 15px;
+  box-shadow: 0 0 30px #0ff0fc;
+  max-width: 500px;
+  width: 90%;
+  text-align: center;
+  color: #fff;
+  font-family: 'Orbitron', sans-serif;
+}
+
+.resultado-sucesso {
+  color: #20e98f;
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+}
+
+.resultado-falha {
+  color: #ff3366;
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+}
+
+.resultado-mensagem {
+  background: #0f0f25;
+  padding: 15px;
+  border-radius: 8px;
+  font-size: 1rem;
+  max-height: 200px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  text-align: left;
+  margin-bottom: 25px;
+}
+
+.btn-fechar {
+  background-color: #0ff0fc;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #1a0933;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.btn-fechar:hover {
+  background-color: #20e98f;
+}

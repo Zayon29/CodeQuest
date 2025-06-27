@@ -4,6 +4,7 @@ import Cadastro from "../Login/Cadastro";
 import PerfilUsuario from "../TelaUsuario/TelaUsuario";
 import PerfilAdmin from "../TelaUsuario/TelaAdmin"
 import ErrorPopup from '../PopUP/ErrorPopup';
+import ResultadoDesafio from './ResultadoDesafio';
 import React, { useState, useEffect } from "react";
 
 function TelaInicial() {
@@ -30,6 +31,10 @@ function TelaInicial() {
 
   const [mostrarErro, setMostrarErro] = useState(false);
   const [mensagemErro, setMensagemErro] = useState('');
+
+  const [mostrarResultado, setMostrarResultado] = useState(false);
+  const [resultadoSucesso, setResultadoSucesso] = useState(false);
+  const [resultadoMensagem, setResultadoMensagem] = useState('');
 
   const abrirCadastro = () => setMostrarCadastro(true);
   const fecharCadastro = () => setMostrarCadastro(false);
@@ -189,7 +194,6 @@ function TelaInicial() {
     const desafioId = desafioAtual._id
 
     try {
-
       const response = await fetch("http://localhost:5000/api/submit", {
         method: "POST",
         headers: {
@@ -208,14 +212,17 @@ function TelaInicial() {
       }
 
       const result = await response.json();
-      alert(
-        "Código enviado com sucesso!\nResposta do servidor: " +
-          JSON.stringify(result)
-      );
+
+      // Em vez do alert, mostra o resultado na tela
+      setResultadoSucesso(result.acertou || false); // ajusta conforme seu backend
+      setResultadoMensagem(JSON.stringify(result, null, 2)); // mensagem detalhada formatada
+      setMostrarResultado(true);
+
     } catch (error) {
       mostrarError("Erro ao enviar código: " + error.message);
     }
   };
+
 
   return (
     <>
@@ -346,6 +353,14 @@ function TelaInicial() {
       {mostrarPerfilAdmin && (
         <PerfilAdmin
           onClose={() => setMostrarPerfilAdmin(false)}
+        />
+      )}
+
+      {mostrarResultado && (
+        <ResultadoDesafio
+          sucesso={resultadoSucesso}
+          mensagem={resultadoMensagem}
+          onClose={() => setMostrarResultado(false)}
         />
       )}
 
