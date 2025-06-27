@@ -35,12 +35,6 @@ function DetalhesDesafio({ desafio, onBack, onSave, onDelete }) {
     setIsEditing(false);
   };
 
-  const handleDelete = () => {
-    if (window.confirm(`Tem certeza que deseja excluir o desafio "${desafio.titulo}"?`)) {
-      onDelete(desafio._id);
-    }
-  };
-
   return (
     <div className="challenge-detail-view-container">
       <div className="detail-header">
@@ -122,7 +116,7 @@ function DetalhesDesafio({ desafio, onBack, onSave, onDelete }) {
         ) : (
           <>
             <button className="btn btn-edit" onClick={() => setIsEditing(true)}>Editar</button>
-            <button className="btn btn-delete" onClick={handleDelete}>Deletar Desafio</button>
+            <button className="btn btn-delete" onClick={() => onDelete(desafio._id)}>Deletar Desafio</button>
           </>
         )}
       </div>
