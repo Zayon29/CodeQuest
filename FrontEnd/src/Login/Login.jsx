@@ -26,9 +26,10 @@ export default function Login({ onLogin, onCancel }) {
 
     if (!response.ok) {
       throw new Error(data.message || "Erro ao logar");
-    }  
+    }
+    
     // Chama onLogin passando apenas os dados necessários
-    onLogin?.(data.usuario,data.token);
+    onLogin?.(data.usuario, data.token);
 
   } catch (error) {
     setErro(error.message);
