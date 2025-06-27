@@ -1,66 +1,77 @@
-/* src/components/TelaInicial/ResultadoDesafio.css */
-
+/* Fundo da tela de resultado */
 .resultado-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(26, 9, 51, 0.85);
+  background-color: rgba(26, 9, 51, 0.95); /* opacidade mais escura */
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 9999;
+  backdrop-filter: blur(6px);
 }
 
-.resultado-container {
-  background: #1a0933;
-  padding: 30px 40px;
-  border-radius: 15px;
-  box-shadow: 0 0 30px #0ff0fc;
-  max-width: 500px;
+/* Container principal do popup */
+.resultado-popup {
+  background: linear-gradient(145deg, #1a0933, #2d0b5a);
+  padding: 40px;
+  border-radius: 20px;
   width: 90%;
+  max-width: 520px;
   text-align: center;
-  color: #fff;
+  box-shadow: 0 0 40px rgba(243, 85, 255, 0.6);
+  border: 2px solid #0ff0fc;
   font-family: 'Orbitron', sans-serif;
+  color: white;
 }
 
+/* Status de sucesso */
 .resultado-sucesso {
   color: #20e98f;
   font-size: 1.8rem;
   margin-bottom: 20px;
+  text-shadow: 0 0 10px #20e98f;
 }
 
+/* Status de falha */
 .resultado-falha {
   color: #ff3366;
   font-size: 1.8rem;
   margin-bottom: 20px;
+  text-shadow: 0 0 10px #ff3366;
 }
 
+/* Bloco com detalhes da execução */
 .resultado-mensagem {
   background: #0f0f25;
-  padding: 15px;
-  border-radius: 8px;
+  padding: 20px;
+  border-radius: 10px;
   font-size: 1rem;
-  max-height: 200px;
+  max-height: 250px;
   overflow-y: auto;
   white-space: pre-wrap;
   text-align: left;
   margin-bottom: 25px;
+  border: 1px solid #0ff0fc30;
 }
 
-.btn-fechar {
-  background-color: #0ff0fc;
+/* Botão de fechar */
+.btn-fechar-resultado {
+  background: linear-gradient(90deg, #0ff0fc, #20e98f);
   border: none;
-  padding: 12px 25px;
-  border-radius: 10px;
+  padding: 12px 30px;
+  border-radius: 12px;
   font-weight: bold;
-  cursor: pointer;
-  color: #1a0933;
   font-size: 1rem;
-  transition: background-color 0.3s ease;
+  color: #1a0933;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px #0ff0fc;
 }
 
-.btn-fechar:hover {
-  background-color: #20e98f;
+.btn-fechar-resultado:hover {
+  background: linear-gradient(90deg, #20e98f, #0ff0fc);
+  box-shadow: 0 0 20px #20e98f, 0 0 25px #0ff0fc;
 }
