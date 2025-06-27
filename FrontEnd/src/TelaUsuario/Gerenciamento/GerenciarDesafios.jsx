@@ -1,26 +1,46 @@
 // src/components/Gerenciamento/GerenciarDesafios.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DetalhesDesafio from './DetalhesDesafios';
 import ConfirmationPopup from '../../PopUP/ConfirmationPopup';
-import CriarDesafios from './CriarDesafios'; // importe a nova tela
+import CriarDesafios from './CriarDesafios';
 import './GerenciarDesafios.css';
 
-const desafiosIniciais = [
-  { id: 1, titulo: 'Soma Simples', descricao: '...', entradaExemplo: '1 2', saidaExemplo: '3', dificuldade: 'fácil', linguagensSuportadas: ['JavaScript', 'Python'] },
-  { id: 2, titulo: 'Validador de Palíndromo', descricao: '...', entradaExemplo: 'arara', saidaExemplo: 'true', dificuldade: 'médio', linguagensSuportadas: ['JavaScript', 'Python', 'Java'] },
-  { id: 3, titulo: 'Busca Binária em Array', descricao: '...', entradaExemplo: '[1, 3, 5, 7], 5', saidaExemplo: '2', dificuldade: 'difícil', linguagensSuportadas: ['JavaScript', 'Python', 'Java', 'C++'] },
-];
-
 function GerenciarDesafios() {
-  const [desafios, setDesafios] = useState(desafiosIniciais);
+  const [desafios, setDesafios] = useState([]);
   const [desafioSelecionado, setDesafioSelecionado] = useState(null);
   const [showConfirmPopup, setShowConfirmPopup] = useState(false);
   const [desafioParaDeletar, setDesafioParaDeletar] = useState(null);
-  const [criandoDesafio, setCriandoDesafio] = useState(false); // controla a tela de criação
+  const [criandoDesafio, setCriandoDesafio] = useState(false);
 
-  const handleSave = (desafioAtualizado) => {
-    setDesafios(desafios.map(d => d.id === desafioAtualizado.id ? desafioAtualizado : d));
-    setDesafioSelecionado(desafioAtualizado);
+  const token = localStorage.getItem('token');
+
+  useEffect(() => {
+    fetch('http://localhost:5000/api/desafios')
+      .then(res => res.json())
+      .then(data => setDesafios(data))
+      .catch(err => console.error('Erro ao carregar desafios:', err));
+  }, []);
+
+  const handleSave = async (desafioAtualizado) => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/desafios/${desafioAtualizado._id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(desafioAtualizado)
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message);
+
+      setDesafios(desafios.map(d => d._id === data._id ? data : d));
+      setDesafioSelecionado(data);
+    } catch (error) {
+      console.error('Erro ao atualizar desafio:', error);
+      alert('Erro ao atualizar desafio');
+    }
   };
 
   const handleDeleteRequest = (desafioId) => {
@@ -28,11 +48,23 @@ function GerenciarDesafios() {
     setShowConfirmPopup(true);
   };
 
-  const handleConfirmDelete = () => {
-    setDesafios(desafios.filter(d => d.id !== desafioParaDeletar));
-    setShowConfirmPopup(false);
-    setDesafioSelecionado(null);
-    setDesafioParaDeletar(null);
+  const handleConfirmDelete = async () => {
+    try {
+      await fetch(`http://localhost:5000/api/desafios/${desafioParaDeletar}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      setDesafios(desafios.filter(d => d._id !== desafioParaDeletar));
+      setShowConfirmPopup(false);
+      setDesafioSelecionado(null);
+      setDesafioParaDeletar(null);
+    } catch (error) {
+      console.error('Erro ao deletar desafio:', error);
+      alert('Erro ao deletar desafio');
+    }
   };
 
   const handleCancelDelete = () => {
@@ -40,13 +72,29 @@ function GerenciarDesafios() {
     setDesafioParaDeletar(null);
   };
 
-  const handleCreateNewDesafio = (novoDesafio) => {
-    setDesafios([...desafios, novoDesafio]);
-    setCriandoDesafio(false);
-    setDesafioSelecionado(novoDesafio); // já abre o novo desafio criado para edição/detalhes
+  const handleCreateNewDesafio = async (novoDesafio) => {
+    try {
+      const response = await fetch('http://localhost:5000/api/desafios', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(novoDesafio)
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message);
+
+      setDesafios(prev => [...prev, data]);
+      setCriandoDesafio(false);
+      setDesafioSelecionado(data);
+    } catch (error) {
+      console.error('Erro ao criar desafio:', error);
+      alert('Erro ao criar desafio');
+    }
   };
 
-  // Exibir tela de detalhes
   if (desafioSelecionado) {
     return (
       <>
@@ -68,7 +116,6 @@ function GerenciarDesafios() {
     );
   }
 
-  // Exibir tela de criação
   if (criandoDesafio) {
     return (
       <CriarDesafios
@@ -78,7 +125,6 @@ function GerenciarDesafios() {
     );
   }
 
-  // Exibir lista de desafios com botão para criar
   return (
     <div className="gerenciar-view">
       <div className="view-header">
@@ -96,7 +142,7 @@ function GerenciarDesafios() {
         <div className="challenge-list">
           {desafios.map(desafio => (
             <div
-              key={desafio.id}
+              key={desafio._id}
               className="challenge-item"
               onClick={() => setDesafioSelecionado(desafio)}
             >
