@@ -18,14 +18,16 @@ const register = async (req, res) => {
       email,
       senha: senhaHash,
       isAdmin: email.endsWith('@codequest.com')
-    })
+    });
 
-    await novoUsuario.save()
+    await novoUsuario.save();
 
-    const token = jwt.sign({ id: novoUsuario._id}, process.env.JWT_SECRET, {expiresIn: '1d'});
+    // 🔐 Gerar token JWT
+    const token = jwt.sign({ id: novoUsuario._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
 
+    // ✅ Retornar o token e os dados do usuário para salvar no localStorage
     res.status(201).json({
-      msg: 'Usuário criado com sucesso!',
+      msg: 'Usuário criadoso!',
       token,
       usuario: {
         id: novoUsuario._id,
@@ -34,11 +36,13 @@ const register = async (req, res) => {
         isAdmin: novoUsuario.isAdmin,
       }
     });
+
   } catch (err) {
-    console.error('Erro no cadastro do usuário: ', err)
+    console.error('Erro no cadastro do usuário: ', err);
     res.status(500).json({ msg: 'Erro no servidor.' });
   }
 };
+
 
 const login = async (req, res) => {
   const { email, senha } = req.body;
@@ -54,7 +58,8 @@ const login = async (req, res) => {
       return res.status(400).json({ msg: 'Senha incorreta.' });
     }
 
-    const token = jwt.sign({ id: usuario._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
+   const token = jwt.sign({ id: usuario._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
+
 
     res.status(200).json({
       token,

@@ -21,9 +21,7 @@ connectDB();
 app.use(cors());
 app.use(express.json({ limit: '1mb' }));
 
-
 console.log('🧭 Registrando rotas...');
-
 
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);

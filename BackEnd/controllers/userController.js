@@ -5,14 +5,15 @@ const bcrypt = require('bcryptjs');
 // === PERFIL AUTENTICADO ===
 const perfil = async (req, res) => {
   try {
-    const usuario = await Usuario.findById(req.usuarioId).select('-senha');
+    // Usar req.user.id para pegar o usuário autenticado (vem do authMiddleware)
+    const usuario = await Usuario.findById(req.user.id).select('-senha');
     if (!usuario) {
       return res.status(404).json({ msg: 'Usuário não encontrado.' });
     }
     res.status(200).json(usuario);
   } catch (err) {
     res.status(500).json({ msg: 'Erro no servidor.' });
-  }
+  } 
 };
 
 // === GET DESAFIOS RESOLVIDOS ===
@@ -63,22 +64,14 @@ const salvarDesafioResolvido = async (req, res) => {
   }
 };
 
-// === OBTER PERFIL (com populate) ===
+// === OBTER PERFIL ===
 const obterPerfil = async (req, res) => {
   try {
-    const user = await Usuario.findById(req.user._id).populate('desafiosResolvidos', 'titulo dificuldade linguagemUtilizada');
-    if (!user) {
-      return res.status(404).json({ message: 'Usuário não encontrado' });
-    }
-
-    res.status(200).json({
-      nome: user.nome,
-      email: user.email,
-      desafiosResolvidos: user.desafiosResolvidos
-    });
+    const usuario = await Usuario.findById(req.user.id).populate('desafiosResolvidos');
+    if (!usuario) return res.status(404).json({ message: 'Usuário não encontrado' });
+    res.json(usuario);
   } catch (err) {
-    console.error('Erro ao obter perfil:', err);
-    res.status(500).json({ message: 'Erro ao obter perfil' });
+    res.status(500).json({ message: 'Erro ao buscar perfil' });
   }
 };
 
@@ -94,9 +87,10 @@ const criarUsuario = async (req, res) => {
     if (usuarioExistente) {
       return res.status(400).json({ message: 'Usuário já existe com esse email' });
     }
+
     const senhaCriptografada = await bcrypt.hash(senha, 10);
 
-    // usuario ja com senha criptografada
+    // novo usuário com senha criptografada
     const novoUsuario = new Usuario({
       nome,
       email,

@@ -1,5 +1,7 @@
 const axios = require('axios');
+const jwt = require('jsonwebtoken');
 const Desafio = require('../models/Desafio');
+const User = require('../models/User');
 
 const JUDGE0_BASE_URL = 'https://judge0-ce.p.rapidapi.com/submissions';
 const RAPIDAPI_KEY = '60c64910b7msh61bb2c1c5e3ec8ep176861jsn91baa08a6dee';
@@ -11,7 +13,6 @@ const headers = {
   'Accept': 'application/json'
 };
 
-// status codes
 const STATUS_MESSAGES = {
   1: 'Em fila de execução',
   2: 'Processando',
@@ -28,9 +29,8 @@ const submeterCodigo = async (req, res) => {
   const { source_code, language_id, desafioId } = req.body;
 
   try {
-    // Validação básica
     if (!source_code || !language_id || !desafioId) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         message: 'Dados incompletos',
         camposFaltantes: {
           source_code: !source_code,
@@ -42,7 +42,7 @@ const submeterCodigo = async (req, res) => {
 
     const desafio = await Desafio.findById(desafioId);
     if (!desafio) {
-      return res.status(404).json({ 
+      return res.status(404).json({
         message: 'Desafio não encontrado',
         desafioId
       });
@@ -56,9 +56,9 @@ const submeterCodigo = async (req, res) => {
         stdin: desafio.entradaExemplo,
         expected_output: desafio.saidaExemplo.replace(/\\n/g, '\n'),
       },
-      { 
+      {
         headers,
-        timeout: 10000 // 10 segundos de timeout
+        timeout: 10000
       }
     );
 
@@ -66,7 +66,6 @@ const submeterCodigo = async (req, res) => {
     const statusCode = resultado.status?.id;
     const statusMessage = STATUS_MESSAGES[statusCode] || resultado.status?.description;
 
-    // Processamento dos resultados
     const responseData = {
       sucesso: statusCode === 3,
       status: statusMessage,
@@ -79,13 +78,35 @@ const submeterCodigo = async (req, res) => {
       }
     };
 
-    // Adiciona informações específicas de erro quando relevante
     if (statusCode !== 3) {
       responseData.erro = {
         tipo: statusMessage,
         detalhes: resultado.compile_output || resultado.stderr || resultado.message,
         statusId: statusCode
       };
+    }
+
+    // código foi aceito e o usuário está logado, salva como desafio resolvido
+    if (statusCode === 3 && req.headers.authorization?.startsWith('Bearer ')) {
+      const token = req.headers.authorization.split(' ')[1];
+
+      try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const usuario = await User.findById(decoded.id);
+
+        if (usuario) {
+          usuario.desafiosResolvidos.push({
+            desafioId: desafio._id,
+            titulo: desafio.titulo,
+            dificuldade: desafio.dificuldade,
+            linguagemUtilizada: language_id.toString(),
+          });
+
+          await usuario.save();
+        }
+      } catch (err) {
+        console.error("Erro ao salvar desafio resolvido:", err.message);
+      }
     }
 
     res.status(200).json(responseData);
@@ -97,7 +118,6 @@ const submeterCodigo = async (req, res) => {
       responseData: err.response?.data
     });
 
-    // Tratamento específico para timeout
     if (err.code === 'ECONNABORTED') {
       return res.status(504).json({
         message: 'Tempo de espera excedido',
@@ -105,7 +125,6 @@ const submeterCodigo = async (req, res) => {
       });
     }
 
-    // Erros da API Judge0
     if (err.response) {
       return res.status(err.response.status).json({
         message: 'Erro no servidor de avaliação',
@@ -114,8 +133,7 @@ const submeterCodigo = async (req, res) => {
       });
     }
 
-    // Erros genéricos
-    res.status(500).json({ 
+    res.status(500).json({
       message: 'Erro interno ao processar submissão',
       error: err.message,
       stack: process.env.NODE_ENV === 'development' ? err.stack : undefined

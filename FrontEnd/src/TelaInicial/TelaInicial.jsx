@@ -2,7 +2,7 @@ import "./TelaInicial.css";
 import Login from "../Login/Login";
 import Cadastro from "../Login/Cadastro";
 import PerfilUsuario from "../TelaUsuario/TelaUsuario";
-import PerfilAdmin from "../TelaUsuario/TelaAdmin"
+import PerfilAdmin from "../TelaUsuario/TelaAdmin";
 import ErrorPopup from '../PopUP/ErrorPopup';
 import React, { useState, useEffect } from "react";
 
@@ -10,7 +10,6 @@ function TelaInicial() {
   const [leftWidth, setLeftWidth] = useState(400);
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState(0);
-
   const [menuOpen, setMenuOpen] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState("");
   const [code, setCode] = useState("");
@@ -18,16 +17,11 @@ function TelaInicial() {
   const [mostrarLogin, setMostrarLogin] = useState(false);
   const [usuarioLogado, setUsuarioLogado] = useState(null);
   const [mostrarCadastro, setMostrarCadastro] = useState(false);
-
   const [mostrarPopupCadastro, setMostrarPopupCadastro] = useState(false);
   const [mensagemPopup, setMensagemPopup] = useState("");
-
   const [mostrarPerfil, setMostrarPerfil] = useState(false);
-
-  const [mostrarPerfilAdmin, setMostrarPerfilAdmin] = useState(false)
-
+  const [mostrarPerfilAdmin, setMostrarPerfilAdmin] = useState(false);
   const [desafioAtual, setDesafioAtual] = useState(null);
-
   const [mostrarErro, setMostrarErro] = useState(false);
   const [mensagemErro, setMensagemErro] = useState('');
 
@@ -39,33 +33,27 @@ function TelaInicial() {
   const fecharPerfilAdmin = () => setMostrarPerfilAdmin(false);
 
   const mostrarError = (mensagem) => {
-  setMensagemErro(mensagem);
-  setMostrarErro(true);
-  
-  // Fecha após 2 segundos
-  setTimeout(() => {
-    setMostrarErro(false);
-  }, 5000);
-};
+    setMensagemErro(mensagem);
+    setMostrarErro(true);
+    setTimeout(() => setMostrarErro(false), 5000);
+  };
 
-  const handleLogin = (usuario) => {
+  const handleLogin = (usuario, token) => {
     setUsuarioLogado(usuario);
+    localStorage.setItem("token", token);
     setMostrarLogin(false);
   };
 
   const handleLogout = () => {
     setUsuarioLogado(null);
-    // Você pode adicionar aqui qualquer limpeza adicional necessária
-    // como remover tokens de autenticação do localStorage, etc.
+    localStorage.removeItem("token");
   };
 
   const handleCadastro = async (usuario) => {
     try {
       const response = await fetch("http://localhost:5000/api/auth/register", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           nome: usuario.nome,
           email: usuario.email,
@@ -75,26 +63,18 @@ function TelaInicial() {
 
       const result = await response.json();
 
-      if (!response.ok) {
-        throw new Error(result.msg || "Erro ao cadastrar");
-      }
+      if (!response.ok) throw new Error(result.msg || "Erro ao cadastrar");
 
       setUsuarioLogado(result.usuario);
+      localStorage.setItem("token", result.token); // <- salvando token aqui
 
-      setMensagemPopup(
-        `Cadastro realizado com sucesso! Bem-vindo, ${result.usuario.nome}!`
-      );
+      setMensagemPopup(`Cadastro realizado com sucesso! Bem-vindo, ${result.usuario.nome}!`);
       setMostrarPopupCadastro(true);
+      setTimeout(() => setMostrarCadastro(false), 2000);
 
-      // Fecha o formulário de cadastro após 2 segundos
-      setTimeout(() => {
-        setMostrarCadastro(false);
-      }, 2000);
     } catch (error) {
-      mostrarError("Erro ao cadastrar: " + error.msg);
+      mostrarError("Erro ao cadastrar: " + error.message);
     }
-
-    setMostrarCadastro(false);
   };
 
   const handleMouseDown = (e) => {
@@ -112,7 +92,6 @@ function TelaInicial() {
         const newWidth = e.clientX - dragOffset;
         const minWidth = 200;
         const maxWidth = window.innerWidth - 200;
-
         if (newWidth >= minWidth && newWidth <= maxWidth) {
           setLeftWidth(newWidth);
         }
@@ -138,62 +117,43 @@ function TelaInicial() {
   useEffect(() => {
     const buscarDesafio = async () => {
       try {
-        const resposta = await fetch(
-          "http://localhost:5000/api/desafios/atual"
-        );
-        if (!resposta.ok) {
-          throw new Error("Erro ao buscar o desafio");
-        }
+        const resposta = await fetch("http://localhost:5000/api/desafios/atual");
+        if (!resposta.ok) throw new Error("Erro ao buscar o desafio");
         const dados = await resposta.json();
         setDesafioAtual(dados);
       } catch (erro) {
-        mostrarError("Erro ao carregar desafio:", erro.message);
+        mostrarError("Erro ao carregar desafio: " + erro.message);
       }
     };
-
     buscarDesafio();
   }, []);
 
   const handleSubmit = async () => {
     if (!selectedLanguage || !code.trim()) {
-      mostrarError(
-        "Selecione uma linguagem e escreva algum código antes de realizar o envio."
-      );
+      mostrarError("Selecione uma linguagem e escreva algum código antes de enviar.");
       return;
     }
 
     let selectedLanguageId;
     switch (selectedLanguage) {
-      case "Assembly":
-        selectedLanguageId = 45;
-        break;
-      case "C-9.2.0":
-        selectedLanguageId = 50;
-        break;
-      case "C++-9.2.0":
-        selectedLanguageId = 54;
-        break;
-      case "Java-JDK17.0.6":
-        selectedLanguageId = 91;
-        break;
-      case "JavaScript-22.08.0":
-        selectedLanguageId = 93;
-        break;
-      case "Python-3.8.1":
-        selectedLanguageId = 71;
-        break;
-      default:
-        selectedLanguageId = null;
+      case "Assembly": selectedLanguageId = 45; break;
+      case "C-9.2.0": selectedLanguageId = 50; break;
+      case "C++-9.2.0": selectedLanguageId = 54; break;
+      case "Java-JDK17.0.6": selectedLanguageId = 91; break;
+      case "JavaScript-22.08.0": selectedLanguageId = 93; break;
+      case "Python-3.8.1": selectedLanguageId = 71; break;
+      default: selectedLanguageId = null;
     }
 
-    const desafioId = desafioAtual._id
+    const desafioId = desafioAtual?._id;
+    const token = localStorage.getItem("token");
 
     try {
-
       const response = await fetch("http://localhost:5000/api/submit", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          ...(token && { Authorization: `Bearer ${token}` }),
         },
         body: JSON.stringify({
           source_code: code,
@@ -202,16 +162,33 @@ function TelaInicial() {
         }),
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Erro ao enviar código");
+      const result = await response.json();
+
+      if (!response.ok || !result.sucesso) {
+        mostrarError("Falha ao submeter código: " + (result.erro?.tipo || "Erro desconhecido"));
+        return;
       }
 
-      const result = await response.json();
-      alert(
-        "Código enviado com sucesso!\nResposta do servidor: " +
-          JSON.stringify(result)
-      );
+      alert("Código enviado com sucesso!\nStatus: " + result.status);
+
+      if (usuarioLogado?.id) {
+        const salvarResponse = await fetch(`http://localhost:5000/api/users/${usuarioLogado.id}/resolver`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            desafioId,
+            linguagemUtilizada: selectedLanguage,
+          }),
+        });
+
+        if (!salvarResponse.ok) {
+          console.warn("Desafio resolvido não pôde ser salvo.");
+        }
+      }
+
     } catch (error) {
       mostrarError("Erro ao enviar código: " + error.message);
     }
@@ -224,77 +201,45 @@ function TelaInicial() {
 
         {!usuarioLogado && (
           <div>
-            <button className="cadastro-button" onClick={abrirCadastro}>
-              Cadastro
-            </button>
-            <button className="login-button" onClick={abrirLogin}>
-              Login
-            </button>
+            <button className="cadastro-button" onClick={abrirCadastro}>Cadastro</button>
+            <button className="login-button" onClick={abrirLogin}>Login</button>
           </div>
         )}
+
         {usuarioLogado && (
           <div className="user-container">
-            <div className="welcome-message">
-              Olá, {usuarioLogado.nome || usuarioLogado.email}
-            </div>
-            <button
-              className="perfil-button"
-              onClick={() => setMostrarPerfil(true)}
-            >
-              Meu Perfil
-            </button>
+            <div className="welcome-message">Olá, {usuarioLogado.nome || usuarioLogado.email}</div>
+            <button className="perfil-button" onClick={() => setMostrarPerfil(true)}>Meu Perfil</button>
             {usuarioLogado.isAdmin && (
-              <button
-              className="perfil-button"
-              onClick={() => setMostrarPerfilAdmin(true)}
-            >
-              Perfil Admin
-            </button>
+              <button className="perfil-button" onClick={abrirPerfilAdmin}>Perfil Admin</button>
             )}
-            <button className="logout-button" onClick={handleLogout}>
-              Logout
-            </button>
+            <button className="logout-button" onClick={handleLogout}>Logout</button>
           </div>
         )}
       </header>
 
       <div className="center-container">
         <div className="box left-box" style={{ width: leftWidth }}>
-          <h2>{desafioAtual ? desafioAtual.titulo : "Carregando desafio..."}</h2>
-          <p>{desafioAtual ? desafioAtual.descricao : "Aguarde enquanto o desafio é carregado."}</p>
-          <p>Entrada Esperada: {desafioAtual ? desafioAtual.entradaExemplo : "Carregando entrada esperadas do desafio"}</p>
-          <p>Saída Esperada: {desafioAtual ? desafioAtual.saidaExemplo : "Carregando saida esperada do desafio"}</p>
-          <h3>Dificuldade do desafio: {desafioAtual ? desafioAtual.dificuldade : "Carregando dificuldade do desafio"}</h3>
+          <h2>{desafioAtual?.titulo || "Carregando desafio..."}</h2>
+          <p>{desafioAtual?.descricao || "Aguarde enquanto o desafio é carregado."}</p>
+          <p>Entrada Esperada: {desafioAtual?.entradaExemplo}</p>
+          <p>Saída Esperada: {desafioAtual?.saidaExemplo}</p>
+          <h3>Dificuldade do desafio: {desafioAtual?.dificuldade}</h3>
         </div>
 
         <div className="divider" onMouseDown={handleMouseDown}></div>
 
-        <div
-          className="editor-box right-box"
-          style={{ width: `calc(100% - ${leftWidth + 10}px)` }}
-        >
+        <div className="editor-box right-box" style={{ width: `calc(100% - ${leftWidth + 10}px)` }}>
           <div className="editor-header">
             <h2 className="editor-title">Editor</h2>
             <div className="menu-container">
-              <button
-                className="menu-button"
-                onClick={() => setMenuOpen((open) => !open)}
-              >
+              <button className="menu-button" onClick={() => setMenuOpen(!menuOpen)}>
                 {selectedLanguage || "Linguagens"}
               </button>
               {menuOpen && (
                 <div className="dropdown-menu">
-                  {[
-                    "Assembly",
-                    "C-9.2.0",
-                    "C++-9.2.0",
-                    "Java-JDK17.0.6",
-                    "JavaScript-22.08.0",
-                    "Python-3.8.1",
-                  ].map((lang) => (
-                    <button key={lang} onClick={() => handleOptionClick(lang)}>
-                      {lang}
-                    </button>
+                  {["Assembly", "C-9.2.0", "C++-9.2.0", "Java-JDK17.0.6", "JavaScript-22.08.0", "Python-3.8.1"].map((lang) => (
+                    <button key={lang} onClick={() => handleOptionClick(lang)}>{lang}</button>
                   ))}
                 </div>
               )}
@@ -303,17 +248,13 @@ function TelaInicial() {
 
           <textarea
             className="code-editor"
-            placeholder={`Digite seu código em ${
-              selectedLanguage || "alguma linguagem"
-            }...`}
+            placeholder={`Digite seu código em ${selectedLanguage || "alguma linguagem"}...`}
             value={code}
             onChange={(e) => setCode(e.target.value)}
             spellCheck={false}
           />
 
-          <button className="submit-button" onClick={handleSubmit}>
-            Enviar Código
-          </button>
+          <button className="submit-button" onClick={handleSubmit}>Enviar Código</button>
         </div>
       </div>
 
@@ -337,24 +278,16 @@ function TelaInicial() {
       )}
 
       {mostrarPerfil && (
-        <PerfilUsuario
-          usuario={usuarioLogado}
-          onClose={() => setMostrarPerfil(false)}
-        />
+        <PerfilUsuario usuario={usuarioLogado} onClose={() => setMostrarPerfil(false)} />
       )}
 
       {mostrarPerfilAdmin && (
-        <PerfilAdmin
-          onClose={() => setMostrarPerfilAdmin(false)}
-        />
+        <PerfilAdmin onClose={fecharPerfilAdmin} />
       )}
 
-   {mostrarErro && (
-  <ErrorPopup 
-    mensagem={mensagemErro}  // ← Mantenha 'mensagem' aqui
-    onClose={() => setMostrarErro(false)} 
-  />
-)}
+      {mostrarErro && (
+        <ErrorPopup mensagem={mensagemErro} onClose={() => setMostrarErro(false)} />
+      )}
 
       <footer className="footer">
         <p>Desenvolvido por Vitor, Zayon e Thomas • CodeQuest © 2025</p>
