@@ -1,0 +1,150 @@
+/* src/components/Gerenciamento/DetalhesUsuario.css */
+
+/* Container principal menor e mais responsivo */
+.user-detail-view-container {
+  background: linear-gradient(145deg, #1f0a3d, #1a0b33);
+  padding: 25px 35px;
+  border-radius: 15px;
+  width: 95%;
+  max-width: 700px; /* Define um tamanho máximo, tornando-o menor */
+  margin: 0 auto; /* Centraliza o container na tela */
+  box-shadow: 0 0 40px rgba(243, 85, 255, 0.5);
+  border: 2px solid #f355ff;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #f355ff30;
+}
+
+.detail-title {
+  color: #f355ff;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.5rem;
+  margin: 0;
+  text-shadow: 0 0 8px #f355ff80;
+}
+
+.btn-back {
+  background: transparent;
+  border: 1px solid #888;
+  color: #ccc;
+  padding: 8px 15px;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-back:hover {
+  background: #555;
+  color: white;
+  border-color: #555;
+}
+
+/* --- ESTILOS DOS CAMPOS (A GRANDE MUDANÇA) --- */
+.detail-body {
+  display: flex;
+  flex-direction: column;
+  gap: 5px; /* Espaçamento menor entre as linhas */
+}
+
+.detail-field {
+  display: flex;
+  justify-content: space-between; /* A mágica do alinhamento acontece aqui! */
+  align-items: center;
+  padding: 12px 10px; /* Espaçamento interno de cada campo */
+  border-bottom: 1px solid #f355ff1a; /* Linha separadora sutil */
+}
+
+.detail-field:last-child {
+  border-bottom: none; /* Remove a linha do último item */
+}
+
+.detail-field label {
+  color: #0ff0fc;
+  font-weight: bold;
+  font-size: 1rem;
+  opacity: 0.9;
+}
+
+/* Estilo para os valores dos campos (textos e inputs) */
+.detail-field .field-value, .detail-field input, .detail-field .checkbox-container {
+  color: #fff;
+  font-size: 1rem;
+  text-align: right;
+}
+
+.detail-field input {
+  background-color: rgba(0, 0, 0, 0.3);
+  border: 1px solid #888;
+  border-radius: 5px;
+  padding: 8px;
+  width: 60%; /* Define uma largura para os inputs */
+  transition: border-color 0.3s;
+}
+
+.detail-field input:focus {
+  outline: none;
+  border-color: #0ff0fc;
+}
+
+/* --- ESTILOS DOS BOTÕES (VAPORWAVE) --- */
+.detail-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  padding-top: 15px;
+  margin-top: auto; /* Empurra o rodapé para baixo */
+  border-top: 1px solid #f355ff30;
+}
+
+.btn {
+  padding: 10px 25px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  font-family: 'Orbitron', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+}
+
+/* Botão Editar: Tons de Azul Claro */
+.btn-edit {
+  background: linear-gradient(45deg, #09c6f9, #05f0ff);
+  color: #1a0933;
+  box-shadow: 0 0 15px rgba(5, 240, 255, 0.4);
+}
+.btn-edit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(5, 240, 255, 0.6);
+}
+
+/* Botão Deletar: Tons Vaporwave de Vermelho/Rosa */
+.btn-delete {
+  background: linear-gradient(45deg, #ff3366, #fe5f88);
+  color: white;
+  box-shadow: 0 0 15px rgba(255, 51, 102, 0.4);
+}
+.btn-delete:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(255, 51, 102, 0.6);
+}
+
+/* Cores consistentes para os botões de edição */
+.btn-save {
+  background: linear-gradient(45deg, #20e98f, #00f799);
+  color: #1a0933;
+}
+.btn-cancel {
+  background: #444;
+  color: #ccc;
+}

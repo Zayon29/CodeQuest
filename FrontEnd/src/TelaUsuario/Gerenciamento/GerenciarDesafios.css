@@ -1,0 +1,56 @@
+/* src/components/Gerenciamento/GerenciarDesafios.css */
+
+.gerenciar-view { width: 100%; display: flex; flex-direction: column; }
+.gerenciar-title { color: #0ff0fc; font-family: 'Orbitron', sans-serif; font-size: 2rem; text-shadow: 0 0 10px #0ff0fc80; margin-bottom: 5px; }
+.gerenciar-subtitle { color: #ccc; margin-top: 0; margin-bottom: 20px; font-size: 0.9rem; }
+
+.list-box { background: rgba(26, 9, 51, 0.8); border: 2px solid #f355ff; box-shadow: 0 0 20px rgba(243, 85, 255, 0.5); border-radius: 15px; padding: 20px; display: flex; flex-direction: column; height: 65vh; }
+.list-header { display: flex; justify-content: space-between; padding-bottom: 10px; border-bottom: 1px solid #f355ff80; color: #f355ff; font-weight: bold; text-transform: uppercase; font-size: 0.8rem; flex-shrink: 0; }
+
+.challenge-list { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; overflow-y: auto; padding-right: 10px; flex-grow: 1; }
+
+.challenge-item { background: rgba(45, 11, 90, 0.6); padding: 18px 20px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid transparent; cursor: pointer; transition: all 0.2s ease-in-out; }
+.challenge-item:hover { background: rgba(78, 20, 156, 0.8); border-color: #0ff0fc; transform: scale(1.01); }
+.challenge-title { font-size: 1.1rem; font-weight: 500; color: #fff; }
+
+/* Selo de Dificuldade */
+.difficulty-badge { padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; text-transform: capitalize; }
+.difficulty-fácil { background-color: #20e98f40; color: #20e98f; border: 1px solid #20e98f; }
+.difficulty-médio { background-color: #ffc10740; color: #ffc107; border: 1px solid #ffc107; }
+.difficulty-difícil { background-color: #ff336640; color: #ff3366; border: 1px solid #ff3366; }
+
+/* Scrollbar customizada */
+.challenge-list::-webkit-scrollbar { width: 10px; }
+.challenge-list::-webkit-scrollbar-track { background: transparent; }
+.challenge-list::-webkit-scrollbar-thumb { background-color: #f355ff; border-radius: 10px; border: 2px solid rgba(26, 9, 51, 0.8); }
+
+.view-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.btn-create {
+  background: linear-gradient(45deg, #20e98f, #00f799);
+  color: #1a0933;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: bold;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 15px rgba(32, 233, 143, 0.4);
+}
+
+.btn-create:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(32, 233, 143, 0.6);
+}
+
+/* Ajuste no título para alinhar com o novo botão */
+.gerenciar-view .gerenciar-title {
+  margin-bottom: 0;
+}
