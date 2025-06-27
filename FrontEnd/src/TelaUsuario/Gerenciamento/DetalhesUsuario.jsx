@@ -1,12 +1,12 @@
-// src/components/Gerenciamento/DetalhesUsuario.jsx
-// Adicionamos className="field-value" aos spans
-
 import React, { useState, useEffect } from 'react';
 import './DetalhesUsuario.css';
 
 function DetalhesUsuario({ usuario, onBack, onSave, onDelete }) {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({ ...usuario, novaSenha: '' });
+
+  const token = localStorage.getItem('token');
+  const apiUrl = 'http://localhost:5000/api/user';
 
   useEffect(() => {
     setFormData({ ...usuario, novaSenha: '' });
@@ -19,17 +19,34 @@ function DetalhesUsuario({ usuario, onBack, onSave, onDelete }) {
   };
 
   const handleSave = () => {
-    const dadosParaSalvar = { ...formData };
-    if (!dadosParaSalvar.novaSenha) {
-      delete dadosParaSalvar.novaSenha;
+    const dadosParaSalvar = {
+      nome: formData.nome,
+      email: formData.email,
+      isAdmin: formData.isAdmin,
+    };
+
+    if (formData.novaSenha) {
+      dadosParaSalvar.senha = formData.novaSenha;
     }
-    onSave(dadosParaSalvar);
-    setIsEditing(false);
+
+    fetch(`${apiUrl}/${usuario._id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(dadosParaSalvar),
+    })
+      .then(res => res.json())
+      .then(data => {
+        onSave(data.usuario);
+        setIsEditing(false);
+      })
+      .catch(err => console.error('Erro ao salvar usuário:', err));
   };
 
   const handleDelete = () => {
-   
-    onDelete(usuario.id);
+    onDelete(usuario._id);
   };
 
   return (
@@ -61,7 +78,7 @@ function DetalhesUsuario({ usuario, onBack, onSave, onDelete }) {
 
         <div className="detail-field">
           <label>Pontos</label>
-          {isEditing ? <input type="number" name="pontos" value={formData.pontos} onChange={handleInputChange} /> : <span className="field-value">{usuario.pontos}</span>}
+          <span className="field-value">{usuario.pontos}</span>
         </div>
 
         <div className="detail-field">

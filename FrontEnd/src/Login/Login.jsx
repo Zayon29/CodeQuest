@@ -26,12 +26,9 @@ export default function Login({ onLogin, onCancel }) {
 
     if (!response.ok) {
       throw new Error(data.message || "Erro ao logar");
-    }
-
-    localStorage.setItem('token', data.token);
-    
+    }  
     // Chama onLogin passando apenas os dados necessários
-    onLogin?.(data.usuario);
+    onLogin?.(data.usuario,data.token);
 
   } catch (error) {
     setErro(error.message);
@@ -73,6 +70,6 @@ export default function Login({ onLogin, onCancel }) {
           Cancelar
         </button>
       </form>
-    </div>
-  );
+    </div>
+  );
 }

@@ -1,70 +1,45 @@
-// src/components/Gerenciamento/GerenciarUsuarios.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DetalhesUsuario from './DetalhesUsuario';
 import ConfirmationPopup from '../../PopUP/ConfirmationPopup';
 import './GerenciarUsuarios.css';
 
-const usuariosIniciais = [
-  { 
-    id: 1, 
-    nome: 'Alice', 
-    email: 'alice@email.com', 
-    pontos: 15200, 
-    isAdmin: true, 
-    desafiosResolvidos: ['id1', 'id2'] 
-  },
-  { 
-    id: 2, 
-    nome: 'Beto', 
-    email: 'beto@email.com', 
-    pontos: 9800, 
-    isAdmin: false, 
-    desafiosResolvidos: ['id1'] 
-  },
-  { 
-    id: 3, 
-    nome: 'Carla', 
-    email: 'carla@email.com', 
-    pontos: 28100, 
-    isAdmin: false, 
-    desafiosResolvidos: ['id1', 'id3', 'id4'] 
-  },
-  { 
-    id: 4, 
-    nome: 'Daniel Longo Nome', 
-    email: 'daniel.longo@email.com', 
-    pontos: 500, 
-    isAdmin: false, 
-    desafiosResolvidos: [] 
-  },
-  { 
-    id: 5, 
-    nome: 'Elena', 
-    email: 'elena@email.com', 
-    pontos: 12345, 
-    isAdmin: false, 
-    desafiosResolvidos: ['id1', 'id2', 'id3'] 
-  },
-  { 
-    id: 6, 
-    nome: 'Fábio', 
-    email: 'fabio@email.com', 
-    pontos: 6789, 
-    isAdmin: true, 
-    desafiosResolvidos: ['id1'] 
-  },
-];
-
 function GerenciarUsuarios() {
-  const [usuarios, setUsuarios] = useState(usuariosIniciais);
+  const [usuarios, setUsuarios] = useState([]);
   const [usuarioSelecionado, setUsuarioSelecionado] = useState(null);
 
   const [showConfirmPopup, setShowConfirmPopup] = useState(false);
   const [usuarioParaDeletar, setUsuarioParaDeletar] = useState(null);
 
+  const token = localStorage.getItem('token');
+  const apiUrl = 'http://localhost:5000/api/user';
+
+  useEffect(() => {
+    fetch(apiUrl, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then(res => res.json())
+      .then(data => setUsuarios(data))
+      .catch(err => console.error('Erro ao buscar usuários:', err));
+  }, []);
+
   const handleSave = (usuarioAtualizado) => {
-    setUsuarios(usuarios.map(u => u.id === usuarioAtualizado.id ? usuarioAtualizado : u));
-    setUsuarioSelecionado(usuarioAtualizado);
+    fetch(`${apiUrl}/${usuarioAtualizado._id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(usuarioAtualizado),
+    })
+      .then(res => res.json())
+      .then(data => {
+        const usuarioAtualizado = data.usuario;
+        setUsuarios(usuarios.map(u => u._id === usuarioAtualizado._id ? usuarioAtualizado : u));
+        setUsuarioSelecionado(usuarioAtualizado);
+      })
+      .catch(err => console.error('Erro ao atualizar usuário:', err));
   };
 
   const handleDeleteRequest = (usuarioId) => {
@@ -73,10 +48,19 @@ function GerenciarUsuarios() {
   };
 
   const handleConfirmDelete = () => {
-    setUsuarios(usuarios.filter(u => u.id !== usuarioParaDeletar));
-    setShowConfirmPopup(false);
-    setUsuarioSelecionado(null);
-    setUsuarioParaDeletar(null);
+    fetch(`${apiUrl}/${usuarioParaDeletar}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then(() => {
+        setUsuarios(usuarios.filter(u => u._id !== usuarioParaDeletar));
+        setShowConfirmPopup(false);
+        setUsuarioSelecionado(null);
+        setUsuarioParaDeletar(null);
+      })
+      .catch(err => console.error('Erro ao deletar usuário:', err));
   };
 
   const handleCancelDelete = () => {
@@ -93,10 +77,9 @@ function GerenciarUsuarios() {
           onSave={handleSave}
           onDelete={handleDeleteRequest}
         />
-        
         {showConfirmPopup && (
           <ConfirmationPopup
-            mensagem={`Tem certeza que deseja excluir o usuário "${usuarios.find(u => u.id === usuarioParaDeletar)?.nome}"? Esta ação não pode ser desfeita.`}
+            mensagem={`Tem certeza que deseja excluir o usuário "${usuarios.find(u => u._id === usuarioParaDeletar)?.nome}"? Esta ação não pode ser desfeita.`}
             onConfirm={handleConfirmDelete}
             onCancel={handleCancelDelete}
           />
@@ -119,7 +102,7 @@ function GerenciarUsuarios() {
         <div className="user-list">
           {usuarios.map(user => (
             <div
-              key={user.id}
+              key={user._id}
               className="user-item"
               onClick={() => setUsuarioSelecionado(user)}
             >
@@ -132,14 +115,6 @@ function GerenciarUsuarios() {
           ))}
         </div>
       </div>
-
-      {showConfirmPopup && (
-        <ConfirmationPopup
-          mensagem="Tem certeza que deseja excluir este usuário? Esta ação não pode ser desfeita."
-          onConfirm={handleConfirmDelete}
-          onCancel={handleCancelDelete}
-        />
-      )}
     </div>
   );
 }
