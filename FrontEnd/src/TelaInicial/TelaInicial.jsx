@@ -4,7 +4,7 @@ import Cadastro from "../Login/Cadastro";
 import PerfilUsuario from "../TelaUsuario/TelaUsuario";
 import PerfilAdmin from "../TelaUsuario/TelaAdmin";
 import ErrorPopup from '../PopUP/ErrorPopup';
-import ResultadoDesafio from './ResultadoDesafio';
+import ResultadoPopup from '../PopUP/ResultadoPopup';
 import React, { useState, useEffect } from "react";
 
 function TelaInicial() {
@@ -27,8 +27,7 @@ function TelaInicial() {
   const [mensagemErro, setMensagemErro] = useState('');
 
   const [mostrarResultado, setMostrarResultado] = useState(false);
-  const [resultadoSucesso, setResultadoSucesso] = useState(false);
-  const [resultadoMensagem, setResultadoMensagem] = useState('');
+  const [dadosResultado, setDadosResultado] = useState(null);
 
   const abrirCadastro = () => setMostrarCadastro(true);
   const fecharCadastro = () => setMostrarCadastro(false);
@@ -168,14 +167,19 @@ function TelaInicial() {
       });
 
       const result = await response.json();
-      alert(
-        "Código enviado com sucesso!\nResposta do servidor: " +
-          JSON.stringify(result)
-      );
+
+      if (!response.ok) {
+        throw new Error(result.message || "Erro ao processar código");
+      }
+
+      setDadosResultado(result);
+      setMostrarResultado(true);
+
     } catch (error) {
       mostrarError("Erro ao enviar código: " + error.message);
     }
   };
+
 
 
   return (
@@ -273,6 +277,12 @@ function TelaInicial() {
   <ErrorPopup 
     mensagem={mensagemErro}  // ← Mantenha 'mensagem' aqui
     onClose={() => setMostrarErro(false)} 
+  />
+)}
+    {mostrarResultado && (
+  <ResultadoPopup 
+    resultado={dadosResultado} 
+    onClose={() => setMostrarResultado(false)} 
   />
 )}
 
